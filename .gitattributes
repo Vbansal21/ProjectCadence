@@ -1,0 +1,21 @@
+# Normalize line endings across platforms
+* text=auto eol=lf
+
+# Treat notebooks as text to avoid CRLF churn; recommended clean filter
+*.ipynb -text
+
+# Images/binaries
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.pdf binary
+*.zip binary
+*.tar binary
+*.gz binary
+
+* text=auto eol=lf
+*.sh text eol=lf
+*.py text eol=lf
+*.yml text eol=lf
+*.md text eol=lf

@@ -1,0 +1,7 @@
+[activate] Activated venv (Python 3.12.3)
+pre-commit installed at .git/hooks/pre-commit
+[activate] pre-commit hook installed
+[activate] which python: /mnt/c/Users/XriyalVixen/OneDrive/Documents/Code/Projects/ProjectCadence/.venv/bin/python
+[activate] which uv:      /home/user/.local/bin/uv
+[activate] Log file:      /mnt/c/Users/XriyalVixen/OneDrive/Documents/Code/Projects/ProjectCadence/activate.log
+[activate] Environment ready – use 'deactivate' to leave

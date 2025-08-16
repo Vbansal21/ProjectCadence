@@ -1,0 +1,104 @@
+#!/usr/bin/env bash
+# ============================================================================
+# ProjectCadence • Activator (uv‑only, verbose + logging)
+# ----------------------------------------------------------------------------
+# Usage (Bash):
+#     source ./activate
+#
+# Features
+#   • Idempotent – safe to re‑source.
+#   • Logs every step to ./activate.log (override with $PC_LOG).
+#   • Continues even if CRLF is detected; only warns.
+#   • Never exits the parent shell; always `return` on failure.
+#   • No Conda required (ignores active Conda env).
+#   • Minimal dependencies: uv + bash.
+# ============================================================================
+
+# ---------------- configuration ----------------------------------------------
+LOGFILE="${PC_LOG:-$(pwd)/activate.log}"
+
+# ---------------- helper functions -------------------------------------------
+_log()  { printf "[activate] %s\n" "$*" | tee -a "$LOGFILE"; }
+_warn() { printf "[activate] WARN: %s\n" "$*" | tee -a "$LOGFILE" >&2; }
+_err()  { printf "[activate] ERROR: %s\n" "$*" | tee -a "$LOGFILE" >&2; }
+
+# ---------------- sourced check ----------------------------------------------
+if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
+  _warn "This script must be sourced. Run:  source ./activate"
+  return 0 2>/dev/null || exit 0
+fi
+
+# ---------------- line‑ending notice -----------------------------------------
+if grep -q $'\r' "${BASH_SOURCE[0]}" 2>/dev/null; then
+  _warn "CRLF line endings detected – script will still run but consider converting to LF."
+fi
+
+# ---------------- enter repo root --------------------------------------------
+ROOT_DIR="$(cd "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)"
+if [[ "$PWD" != "$ROOT_DIR" ]]; then
+  cd "$ROOT_DIR" || { _err "Cannot cd to $ROOT_DIR"; return 1; }
+  _log "cd $ROOT_DIR"
+fi
+
+# ---------------- require uv --------------------------------------------------
+if ! command -v uv >/dev/null 2>&1; then
+  _err "uv not found in PATH. Install: https://docs.astral.sh/uv/"
+  return 1
+fi
+
+# ---------------- create .venv if needed -------------------------------------
+if [[ ! -d .venv ]]; then
+  _log "Creating .venv (uv venv)"
+  if ! uv venv .venv >>"$LOGFILE" 2>&1; then
+    _err "uv venv failed – see $LOGFILE for details."
+    return 1
+  fi
+fi
+
+if [[ ! -x .venv/bin/python ]]; then
+  _err "Corrupt venv: .venv/bin/python missing. Delete .venv and retry."
+  return 1
+fi
+
+# ---------------- activate ----------------------------------------------------
+# shellcheck disable=SC1091
+source .venv/bin/activate
+_log "Activated venv ($(python -V 2>&1))"
+
+# ---------------- install dev tools ------------------------------------------
+NEEDED=()
+command -v pre-commit >/dev/null 2>&1 || NEEDED+=(pre-commit)
+python - <<'PY' >/dev/null 2>&1 || NEEDED+=(ruff black)
+import importlib, sys
+try:
+    importlib.import_module('ruff')
+    importlib.import_module('black')
+except ImportError:
+    sys.exit(1)
+PY
+
+if (( ${#NEEDED[@]} )); then
+  _log "Installing dev tools: ${NEEDED[*]}"
+  uv pip install --quiet --upgrade "${NEEDED[@]}" >>"$LOGFILE" 2>&1 || _warn "Tool installation issues – check $LOGFILE"
+fi
+
+# ---------------- pre‑commit hook --------------------------------------------
+if [[ -d .git && -f .pre-commit-config.yaml ]]; then
+  pre-commit install >>"$LOGFILE" 2>&1 && _log "pre-commit hook installed"
+fi
+
+# ---------------- interactive prompt tweak -----------------------------------
+if [[ $- == *i* ]]; then
+  LABEL="$(basename "$PWD")"
+  [[ -z "${_PC_OLD_PS1-}" ]] && { export _PC_OLD_PS1="$PS1"; export PS1="(${LABEL}) ${PS1}"; }
+fi
+
+# ---------------- exports -----------------------------------------------------
+export PYTHONUTF8=1
+export PYTHONDONTWRITEBYTECODE=1
+
+# ---------------- summary -----------------------------------------------------
+_log "which python: $(command -v python)"
+_log "which uv:      $(command -v uv)"
+_log "Log file:      $LOGFILE"
+_log "Environment ready – use 'deactivate' to leave"
