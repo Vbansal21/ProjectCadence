@@ -55,7 +55,17 @@ def slugify(text):
 
 
 def mk_dirs(root):
-    for d in ["src", "notebooks", "tests", "data", "docs", "scripts"]:
+    for d in [
+        "src",
+        "notebooks",
+        "tests",
+        "data",
+        "docs",
+        "scripts",
+        "assets",
+        "benchmarks",
+        "examples",
+    ]:
         (root / d).mkdir(parents=True, exist_ok=True)
     (root / "data" / ".gitkeep").touch()
 
