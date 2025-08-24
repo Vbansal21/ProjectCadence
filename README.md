@@ -4,11 +4,12 @@
 
 ## Calendar-free cadence
 
+
 | Week | Start (Mon) | End (Sun)  |
-| ---- | ----------- | ---------- |
+| ------ | ------------- | ------------ |
 | 01   | 2025-08-04  | 2025-08-10 |
 | 02   | 2025-08-11  | 2025-08-17 |
-| …    | …           | …          |
+| …   | …          | …         |
 
 Full table auto-computed via tooling.
 
@@ -25,17 +26,19 @@ source ./activate
 python3 tooling/cadence.py new 1 vortex-viz
 
 # commit
+pre-commit run --all-files
 git add .
 git commit -m "feat(W01): scaffold vortex-viz"
 ```
 
 ## Core commands
 
-| Purpose                | Command                                                   |
-| ---------------------- | --------------------------------------------------------- |
-| **Create** week        | python3 tooling/cadence.py new <n> <slug>                 |
+
+| Purpose                | Command                                                    |
+| ------------------------ | ------------------------------------------------------------ |
+| **Create** week        | python3 tooling/cadence.py new<n> <slug>                   |
 | **Info** for week/date | python3 tooling/cadence.py info 3   ·   --date 2025-09-05 |
-| **Current** pointer    | python3 tooling/cadence.py current --set 4                |
+| **Current** pointer    | python3 tooling/cadence.py current --set 4                 |
 
 ## Weekly workflow
 

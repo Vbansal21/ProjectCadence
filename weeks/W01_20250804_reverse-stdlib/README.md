@@ -1,4 +1,4 @@
-# Week 1 — Reverse-Engineering Stdlib (C++20
+# Week 1 — Reverse-Engineering Stdlib (C++20)
 
 **Week** 01 – 2025-08-04 → 2025-08-10
 
