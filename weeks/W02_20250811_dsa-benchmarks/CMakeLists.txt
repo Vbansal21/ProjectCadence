@@ -38,6 +38,19 @@ add_executable(bench
   src/hash.hpp
 )
 
+add_executable(tests_smoke
+  tests/smoke.cpp
+  src/arena.hpp
+  src/vector.hpp
+  src/list.hpp
+  src/heap.hpp
+  src/hash.hpp
+)
+
+add_executable(cache_probe
+benchmarks/cache_probe.cpp
+)
+
 # Linux perf users may also want pthread
 if(UNIX)
   target_link_libraries(bench pthread)

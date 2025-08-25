@@ -91,17 +91,10 @@ inline Row run_heap_pushpop(std::size_t N, Dist dist, int trial, std::uint64_t s
 
     std::uint64_t ns = time_ns([&]
                                {
-                                   for (auto k : keys)
-                                       h.push(k);
-                                   while (!h.empty())
-                                   {
-                                       s.eat(h.top()); /* naive pop: rebuild not implemented */
-                                       break;
-                                   }
-                                   // NOTE: for clean pop loop, extend BinaryHeap with a working pop() + DynArray::pop_back()
-                               });
+        for (auto k: keys) h.push(k);
+        while(!h.empty()){ s.eat(h.top()); h.pop(); } });
 
-    Row r{"heap", "custom", "push_then_peek", dist == Dist::Uniform ? "uniform" : "zipf",
+    Row r{"heap", "custom", "push_then_pop_all", dist == Dist::Uniform ? "uniform" : "zipf",
           "", N, trial, seed, ns, s.acc};
     return r;
 }

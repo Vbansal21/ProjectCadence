@@ -73,6 +73,24 @@ public:
         return data_[size_++];
     }
 
+    void pop_back()
+    {
+        assert(size_ > 0);
+        data_[size_ - 1].~T();
+        --size_;
+    }
+
+    T &back()
+    {
+        assert(size_ > 0);
+        return data_[size_ - 1];
+    }
+    const T &back() const
+    {
+        assert(size_ > 0);
+        return data_[size_ - 1];
+    }
+
     void clear()
     {
         for (std::size_t i = 0; i < size_; ++i)
@@ -82,6 +100,7 @@ public:
 
     std::size_t size() const { return size_; }
     std::size_t capacity() const { return cap_; }
+    bool empty() const { return size_ == 0; }
     T *data() { return data_; }
     const T *data() const { return data_; }
 
@@ -113,12 +132,10 @@ private:
         if (arena_)
         {
             ndata = static_cast<T *>(arena_->allocate(ncap * sizeof(T), alignof(T)));
-            // move-construct into arena memory
             for (std::size_t i = 0; i < size_; ++i)
                 new (ndata + i) T(std::move(data_[i]));
             for (std::size_t i = 0; i < size_; ++i)
                 data_[i].~T();
-            // old memory not freed (arena)
         }
         else
         {

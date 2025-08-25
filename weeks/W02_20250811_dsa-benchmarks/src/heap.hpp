@@ -4,7 +4,6 @@
 #include "vector.hpp"
 
 // Binary max-heap backed by DynArray<T>.
-// For min-heap, store std::greater<T> comparator or invert values.
 template <typename T>
 class BinaryHeap
 {
@@ -26,22 +25,19 @@ public:
 
     bool pop()
     {
-        if (a_.size() == 0)
+        if (a_.empty())
             return false;
-        a_[0] = std::move(a_[a_.size() - 1]);
-        --size_ref_();
-        sift_down_(0);
+        a_[0] = std::move(a_.back());
+        a_.pop_back();
+        if (!a_.empty())
+            sift_down_(0);
         return true;
     }
 
     std::size_t size() const { return a_.size(); }
-    bool empty() const { return size() == 0; }
+    bool empty() const { return a_.empty(); }
 
 private:
-    std::size_t &size_ref_() { return *reinterpret_cast<std::size_t *>((char *)&a_ + offsetof(DynArray<T>, size_)); } // hack avoided; provide method:
-    // Safer: expose a_.clear()/emplace but we want simplicity; replace with a_.reserve and manual size mgmt if needed.
-    // Simpler: rebuild: swap last then pop by clearing constructor; use implementation below instead.
-
     void sift_up_(std::size_t i)
     {
         while (i > 0)

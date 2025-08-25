@@ -18,7 +18,7 @@ for (ds, wl), sub in g.groupby(["ds", "workload"]):
     plt.xlabel("N")
     plt.ylabel("ns/op (approx)")
     plt.title(f"{ds} :: {wl}")
-    out = path.parent / f"{ds}_{wl}.png"
+    out = path.parent / f"{path.parts[-1].removesuffix('.csv')}_{ds}_{wl}.png"
     plt.savefig(out, bbox_inches="tight")
     plt.close()
 print("Wrote plots to", path.parent)
