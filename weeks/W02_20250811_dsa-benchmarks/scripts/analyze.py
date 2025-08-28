@@ -33,14 +33,18 @@ pivot["speedup_custom_vs_stl"] = pivot["stl"] / pivot["custom"]
 
 outdir = path.parent
 stats.to_csv(
-    outdir / f"{path.parts[-1].replace('.csv','_analysis')}_summary_stats.csv",
+    outdir / f"{path.parts[-1].replace('.csv', '_analysis')}_summary_stats.csv",
     index=False,
 )
-pivot.to_csv(outdir / f"{path.parts[-1].replace('.csv','_analysis')}_speedup_table.csv")
+pivot.to_csv(
+    outdir / f"{path.parts[-1].replace('.csv', '_analysis')}_speedup_table.csv"
+)
 
 print(
-    "Wrote:", outdir / f"{path.parts[-1].replace('.csv','_analysis')}_summary_stats.csv"
+    "Wrote:",
+    outdir / f"{path.parts[-1].replace('.csv', '_analysis')}_summary_stats.csv",
 )
 print(
-    "Wrote:", outdir / f"{path.parts[-1].replace('.csv','_analysis')}_speedup_table.csv"
+    "Wrote:",
+    outdir / f"{path.parts[-1].replace('.csv', '_analysis')}_speedup_table.csv",
 )

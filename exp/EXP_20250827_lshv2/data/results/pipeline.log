@@ -1,0 +1,1198 @@
+==> Logging to data/results/pipeline.log at 2025-08-28T10:44:02.538518
+🚀 LSH v2 Complete Pipeline Runner (EXP_20250827_lshv2)
+============================================================
+Quick mode     : True
+Skip training  : False
+Skip benchmark : False
+Test only      : False
+Smoke only     : False
+Profile subproc: False
+
+🧰 Environment Sanity
+============================================================
+Base directory: /mnt/c/Users/XriyalVixen/OneDrive/Documents/Code/Projects/ProjectCadence/exp/EXP_20250827_lshv2 (EXP_20250827_lshv2)
+Timestamp: 2025-08-28 10:44:02
+PyTorch: 2.8.0+cpu | CUDA: no
+NumPy: 2.3.2
+
+🧪 Phase 1: Basic Tests
+
+🔧 Model Creation Test
+============================================================
+Command: python test_model.py
+✅ Model Creation Test completed successfully.
+--- Last output (tail) ---
+Creating LSH v2 model...
+[LSHv2] params: 133,897,392 | flash3=no | reversible=True | tied_groups=6 over 24 layers
+Testing forward pass...
+✅ Model test successful!
+Input shape: torch.Size([1, 1024])
+Output shape: torch.Size([1, 1024, 32000])
+Parameters: 133,897,392
+
+🔧 Synthetic Data Generation
+============================================================
+Command: python data/synthetic_data_generator.py
+✅ Synthetic Data Generation completed successfully.
+--- Last output (tail) ---
+🔧 Testing Synthetic Data Generation
+==================================================
+✅ Set Data task: 2048 tokens, 252 items
+✅ Odd One Out task: 2048 tokens, 96 sets
+✅ Fuzzy Regex task: 2048 tokens, 25 patterns
+✅ Mixed sequence: 16384 tokens, 3 tasks
+
+🎯 Data generator ready for training!
+
+🚀 Training
+============================================================
+
+🔧 Quick Training
+============================================================
+Command: python quick_train.py
+❌ Quick Training failed (return code 1).
+--- Last error (tail) ---
+vice(type='cpu')}
+recomputed metadata: {'shape': torch.Size([264]), 'dtype': torch.bool, 'device': device(type='cpu')}
+tensor at position 282:
+saved metadata: {'shape': torch.Size([263]), 'dtype': torch.bool, 'device': device(type='cpu')}
+recomputed metadata: {'shape': torch.Size([264]), 'dtype': torch.bool, 'device': device(type='cpu')}
+tensor at position 283:
+saved metadata: {'shape': torch.Size([263]), 'dtype': torch.bool, 'device': device(type='cpu')}
+recomputed metadata: {'shape': torch.Size([264]), 'dtype': torch.bool, 'device': device(type='cpu')}
+tensor at position 289:
+saved metadata: {'shape': torch.Size([263]), 'dtype': torch.bool, 'device': device(type='cpu')}
+recomputed metadata: {'shape': torch.Size([264]), 'dtype': torch.bool, 'device': device(type='cpu')}
+tensor at position 293:
+saved metadata: {'shape': torch.Size([4102, 384]), 'dtype': torch.float32, 'device': device(type='cpu')}
+recomputed metadata: {'shape': torch.Size([4103, 384]), 'dtype': torch.float32, 'device': device(type='cpu')}
+tensor at position 295:
+saved metadata: {'shape': torch.Size([1, 4102, 384]), 'dtype': torch.float32, 'device': device(type='cpu')}
+recomputed metadata: {'shape': torch.Size([1, 4103, 384]), 'dtype': torch.float32, 'device': device(type='cpu')}
+tensor at position 297:
+saved metadata: {'shape': torch.Size([1, 4102, 1]), 'dtype': torch.float32, 'device': device(type='cpu')}
+recomputed metadata: {'shape': torch.Size([1, 4103, 1]), 'dtype': torch.float32, 'device': device(type='cpu')}
+tensor at position 298:
+saved metadata: {'shape': torch.Size([1, 4102, 1]), 'dtype': torch.float32, 'device': device(type='cpu')}
+recomputed metadata: {'shape': torch.Size([1, 4103, 1]), 'dtype': torch.float32, 'device': device(type='cpu')}
+.
+
+Tip: To see a more detailed error message, either pass `debug=True` to
+`torch.utils.checkpoint.checkpoint(...)` or wrap the code block
+with `with torch.utils.checkpoint.set_checkpoint_debug_enabled(True):` to
+enable checkpoint‑debug mode globally.
+
+
+🏁 Benchmark
+============================================================
+
+🔧 Quick Benchmark
+============================================================
+Command: python quick_benchmark.py
+✅ Quick Benchmark completed successfully.
+--- Last output (tail) ---
+Arena init @ 2025-08-28 10:45:45 ==
+Device: cpu | AMP: True (bf16)
+[LSHv2] params: 133,897,392 | flash3=no | reversible=True | tied_groups=6 over 24 layers
+NOTE: SyntheticDataGenerator unavailable, falling back to random tokens: can only concatenate tuple (not "list") to tuple
+
+🎯 Long-Arena Benchmark start @ 2025-08-28 10:45:48
+Output dir: /mnt/c/Users/XriyalVixen/OneDrive/Documents/Code/Projects/ProjectCadence/exp/EXP_20250827_lshv2/data/results/quick_benchmark
+Autocast enabled with dtype=bfloat16
+
+🔍 Sequence length: 1,024 (B=1)
+  01:     349.1 tok/s |  2.9334 s | Δmem  0.05 GB | peak  0.86 GB | ppl 36352.00
+  02:     354.2 tok/s |  2.8909 s | Δmem  0.06 GB | peak  0.86 GB | ppl 36352.00
+  03:     205.3 tok/s |  4.9884 s | Δmem  0.06 GB | peak  0.87 GB | ppl 36352.00
+📊 1,024: succ=100%, tps=303, lat=3.6042s, Δmem=0.06GB, peak=0.87GB, ppl=36352.00
+
+🔍 Sequence length: 2,048 (B=1)
+  01:     330.8 tok/s |  6.1906 s | Δmem  0.14 GB | peak  0.96 GB | ppl 38656.00
+  02:     354.9 tok/s |  5.7710 s | Δmem  0.15 GB | peak  0.95 GB | ppl 36352.00
+  03:     303.4 tok/s |  6.7495 s | Δmem  0.13 GB | peak  0.93 GB | ppl 36352.00
+📊 2,048: succ=100%, tps=330, lat=6.2370s, Δmem=0.14GB, peak=0.96GB, ppl=37120.00
+
+🔍 Sequence length: 4,096 (B=1)
+  01:     324.6 tok/s | 12.6196 s | Δmem  0.27 GB | peak  1.07 GB | ppl 38656.00
+  02:     343.3 tok/s | 11.9306 s | Δmem  0.24 GB | peak  1.07 GB | ppl 36352.00
+  03:     387.6 tok/s | 10.5673 s | Δmem  0.26 GB | peak  1.09 GB | ppl 36352.00
+📊 4,096: succ=100%, tps=352, lat=11.7059s, Δmem=0.26GB, peak=1.09GB, ppl=37120.00
+
+📈 Scaling fit:
+  latency ~ n^0.850 (R²=0.998)
+   memory ~ n^0.164 (R²=0.995)
+ throughput ~ n^0.108 (R²=0.994)
+💾 Saved results to: data/results/quick_benchmark and data/results/benchmark_summary.json
+🖼️ Plot saved: data/results/quick_benchmark/long_arena_benchmark.png
+
+🏁 Benchmark complete.
+  Max N: 4,096
+  Peak TPS: 352
+  Time complexity exponent α ≈ 0.850
+  Memory complexity exponent β ≈ 0.164
+🎉 Quick benchmark complete!
+
+🔧 Results Consolidation
+============================================================
+Command: python consolidate.py
+✅ Results Consolidation completed successfully.
+--- Last output (tail) ---
+✅ Consolidated -> data/results/final/pipeline_results.json
+  present: benchmark_summary.json
+
+🔧 Final Package
+============================================================
+Command: python package.py
+✅ Final Package completed successfully.
+--- Last output (tail) ---
+✅ Final package created: lsh_v2_complete_package.zip
+Package size: 0.37 MB
+
+🎉 Pipeline Complete!
+============================================================
+Overall Success Rate: 5/6 (83.3%)
+Phase Results:
+  model_test: ✅ PASS
+  data_test: ✅ PASS
+  training: ❌ FAIL
+  benchmark: ✅ PASS
+  consolidation: ✅ PASS
+  packaging: ✅ PASS
+==> Logging to data/results/pipeline.log at 2025-08-28T11:40:07.853988
+🚀 LSH v2 Complete Pipeline Runner (EXP_20250827_lshv2)
+============================================================
+Quick mode     : True
+Skip training  : False
+Skip benchmark : False
+Test only      : False
+Smoke only     : False
+Profile subproc: False
+Skip Consolidation: False
+Skip Packaging : False
+Timeout (s)    : 3600
+
+🧰 Environment Sanity
+============================================================
+Base directory: /mnt/c/Users/XriyalVixen/OneDrive/Documents/Code/Projects/ProjectCadence/exp/EXP_20250827_lshv2 (EXP_20250827_lshv2)
+Timestamp: 2025-08-28 11:40:07
+==> Logging to data/results/pipeline.log at 2025-08-28T11:40:46.025231
+🚀 LSH v2 Complete Pipeline Runner (EXP_20250827_lshv2)
+============================================================
+Quick mode     : True
+Skip training  : False
+Skip benchmark : False
+Test only      : False
+Smoke only     : False
+Profile subproc: False
+Skip Consolidation: True
+Skip Packaging : True
+Timeout (s)    : 3600
+
+🧰 Environment Sanity
+============================================================
+Base directory: /mnt/c/Users/XriyalVixen/OneDrive/Documents/Code/Projects/ProjectCadence/exp/EXP_20250827_lshv2 (EXP_20250827_lshv2)
+Timestamp: 2025-08-28 11:40:46
+PyTorch: 2.8.0+cpu | CUDA: no
+NumPy: 2.3.2
+
+🧪 Phase 1: Basic Tests
+
+🔧 Model Creation Test
+============================================================
+Command: python test_model.py
+✅ Model Creation Test completed successfully.
+--- Last output (tail) ---
+Creating LSH v2 model...
+[LSHv2] params: 133,897,392 | flash3=no | reversible=True | tied_groups=6 over 24 layers
+Testing forward pass...
+✅ Model test successful!
+Input shape: torch.Size([1, 1024])
+Output shape: torch.Size([1, 1024, 32000])
+Parameters: 133,897,392
+
+🔧 Synthetic Data Generation
+============================================================
+Command: python data/synthetic_data_generator.py
+✅ Synthetic Data Generation completed successfully.
+--- Last output (tail) ---
+🔧 Testing Synthetic Data Generation
+==================================================
+✅ Set Data task: 2048 tokens, 462 items
+✅ Odd One Out task: 2048 tokens, 22 sets
+✅ Fuzzy Regex task: 2048 tokens, 31 patterns
+✅ Mixed sequence: 16384 tokens, 4 tasks
+
+🎯 Data generator ready for training!
+
+🚀 Training
+============================================================
+
+🔧 Quick Training
+============================================================
+Command: python quick_train.py
+❌ Quick Training failed (return code 1).
+--- Last error (tail) ---
+vice(type='cpu')}
+recomputed metadata: {'shape': torch.Size([264]), 'dtype': torch.bool, 'device': device(type='cpu')}
+tensor at position 282:
+saved metadata: {'shape': torch.Size([263]), 'dtype': torch.bool, 'device': device(type='cpu')}
+recomputed metadata: {'shape': torch.Size([264]), 'dtype': torch.bool, 'device': device(type='cpu')}
+tensor at position 283:
+saved metadata: {'shape': torch.Size([263]), 'dtype': torch.bool, 'device': device(type='cpu')}
+recomputed metadata: {'shape': torch.Size([264]), 'dtype': torch.bool, 'device': device(type='cpu')}
+tensor at position 289:
+saved metadata: {'shape': torch.Size([263]), 'dtype': torch.bool, 'device': device(type='cpu')}
+recomputed metadata: {'shape': torch.Size([264]), 'dtype': torch.bool, 'device': device(type='cpu')}
+tensor at position 293:
+saved metadata: {'shape': torch.Size([4102, 384]), 'dtype': torch.float32, 'device': device(type='cpu')}
+recomputed metadata: {'shape': torch.Size([4103, 384]), 'dtype': torch.float32, 'device': device(type='cpu')}
+tensor at position 295:
+saved metadata: {'shape': torch.Size([1, 4102, 384]), 'dtype': torch.float32, 'device': device(type='cpu')}
+recomputed metadata: {'shape': torch.Size([1, 4103, 384]), 'dtype': torch.float32, 'device': device(type='cpu')}
+tensor at position 297:
+saved metadata: {'shape': torch.Size([1, 4102, 1]), 'dtype': torch.float32, 'device': device(type='cpu')}
+recomputed metadata: {'shape': torch.Size([1, 4103, 1]), 'dtype': torch.float32, 'device': device(type='cpu')}
+tensor at position 298:
+saved metadata: {'shape': torch.Size([1, 4102, 1]), 'dtype': torch.float32, 'device': device(type='cpu')}
+recomputed metadata: {'shape': torch.Size([1, 4103, 1]), 'dtype': torch.float32, 'device': device(type='cpu')}
+.
+
+Tip: To see a more detailed error message, either pass `debug=True` to
+`torch.utils.checkpoint.checkpoint(...)` or wrap the code block
+with `with torch.utils.checkpoint.set_checkpoint_debug_enabled(True):` to
+enable checkpoint‑debug mode globally.
+
+
+🏁 Benchmark
+============================================================
+
+🔧 Quick Benchmark
+============================================================
+Command: python quick_benchmark.py
+✅ Quick Benchmark completed successfully.
+--- Last output (tail) ---
+Arena init @ 2025-08-28 11:42:24 ==
+Device: cpu | AMP: True (bf16)
+[LSHv2] params: 133,897,392 | flash3=no | reversible=True | tied_groups=6 over 24 layers
+NOTE: SyntheticDataGenerator unavailable, falling back to random tokens: can only concatenate tuple (not "list") to tuple
+
+🎯 Long-Arena Benchmark start @ 2025-08-28 11:42:27
+Output dir: /mnt/c/Users/XriyalVixen/OneDrive/Documents/Code/Projects/ProjectCadence/exp/EXP_20250827_lshv2/data/results/quick_benchmark
+Autocast enabled with dtype=bfloat16
+
+🔍 Sequence length: 1,024 (B=1)
+  01:     276.8 tok/s |  3.7000 s | Δmem  0.07 GB | peak  0.87 GB | ppl 38656.00
+  02:     262.3 tok/s |  3.9039 s | Δmem  0.06 GB | peak  0.87 GB | ppl 38656.00
+  03:     274.6 tok/s |  3.7291 s | Δmem  0.06 GB | peak  0.87 GB | ppl 36352.00
+📊 1,024: succ=100%, tps=271, lat=3.7776s, Δmem=0.06GB, peak=0.87GB, ppl=37888.00
+
+🔍 Sequence length: 2,048 (B=1)
+  01:     354.1 tok/s |  5.7840 s | Δmem  0.09 GB | peak  0.93 GB | ppl 38656.00
+  02:     350.8 tok/s |  5.8376 s | Δmem  0.15 GB | peak  0.96 GB | ppl 36352.00
+  03:     307.8 tok/s |  6.6540 s | Δmem  0.13 GB | peak  0.93 GB | ppl 36352.00
+📊 2,048: succ=100%, tps=338, lat=6.0919s, Δmem=0.12GB, peak=0.96GB, ppl=37120.00
+
+🔍 Sequence length: 4,096 (B=1)
+  01:     427.2 tok/s |  9.5872 s | Δmem  0.31 GB | peak  1.12 GB | ppl 38656.00
+  02:     378.6 tok/s | 10.8178 s | Δmem  0.33 GB | peak  1.14 GB | ppl 32000.00
+  03:     394.5 tok/s | 10.3831 s | Δmem  0.31 GB | peak  1.11 GB | ppl 38656.00
+📊 4,096: succ=100%, tps=400, lat=10.2627s, Δmem=0.32GB, peak=1.14GB, ppl=36437.33
+
+📈 Scaling fit:
+  latency ~ n^0.721 (R²=0.999)
+   memory ~ n^0.195 (R²=0.972)
+ throughput ~ n^0.280 (R²=0.995)
+💾 Saved results to: data/results/quick_benchmark and data/results/benchmark_summary.json
+🖼️ Plot saved: data/results/quick_benchmark/long_arena_benchmark.png
+
+🏁 Benchmark complete.
+  Max N: 4,096
+  Peak TPS: 400
+  Time complexity exponent α ≈ 0.721
+  Memory complexity exponent β ≈ 0.195
+🎉 Quick benchmark complete!
+
+⏭️ Consolidation skipped by flag
+
+⏭️ Packaging skipped by flag
+
+🎉 Pipeline Complete!
+============================================================
+Overall Success Rate: 5/6 (83.3%)
+Phase Results:
+  model_test: ✅ PASS
+  data_test: ✅ PASS
+  training: ❌ FAIL
+  benchmark: ✅ PASS
+  consolidation: ✅ PASS
+  packaging: ✅ PASS
+==> Logging to data/results/pipeline.log at 2025-08-28T11:52:21.445451
+🚀 LSH v2 Complete Pipeline Runner (EXP_20250827_lshv2)
+============================================================
+Quick mode     : True
+Skip training  : False
+Skip benchmark : False
+Test only      : False
+Smoke only     : False
+Profile subproc: False
+Skip Consolidation: True
+Skip Packaging : True
+Timeout (s)    : 3600
+
+🧰 Environment Sanity
+============================================================
+Base directory: /mnt/c/Users/XriyalVixen/OneDrive/Documents/Code/Projects/ProjectCadence/exp/EXP_20250827_lshv2 (EXP_20250827_lshv2)
+Timestamp: 2025-08-28 11:52:21
+PyTorch: 2.8.0+cpu | CUDA: no
+NumPy: 2.3.2
+
+🧪 Phase 1: Basic Tests
+
+🔧 Model Creation Test
+============================================================
+Command: python test_model.py
+✅ Model Creation Test completed successfully.
+--- Last output (tail) ---
+Creating LSH v2 model...
+[LSHv2] params: 133,897,392 | flash3=no | reversible=True | tied_groups=6 over 24 layers
+Testing forward pass...
+✅ Model test successful!
+Input shape: torch.Size([1, 1024])
+Output shape: torch.Size([1, 1024, 32000])
+Parameters: 133,897,392
+
+🔧 Synthetic Data Generation
+============================================================
+Command: python data/synthetic_data_generator.py
+✅ Synthetic Data Generation completed successfully.
+--- Last output (tail) ---
+🔧 Testing Synthetic Data Generation
+==================================================
+✅ Set Data task: 2048 tokens, 422 items
+✅ Odd One Out task: 2048 tokens, 39 sets
+✅ Fuzzy Regex task: 2048 tokens, 34 patterns
+✅ Mixed sequence: 16384 tokens, 4 tasks
+
+🎯 Data generator ready for training!
+
+🚀 Training
+============================================================
+
+🔧 Quick Training
+============================================================
+Command: python quick_train.py
+❌ Quick Training failed (return code 1).
+--- Last error (tail) ---
+e': torch.float32, 'device': device(type='cpu')}
+tensor at position 277:
+saved metadata: {'shape': torch.Size([1, 1, 72]), 'dtype': torch.float32, 'device': device(type='cpu')}
+recomputed metadata: {'shape': torch.Size([1, 1, 84]), 'dtype': torch.float32, 'device': device(type='cpu')}
+tensor at position 278:
+saved metadata: {'shape': torch.Size([1, 1, 72, 64]), 'dtype': torch.float32, 'device': device(type='cpu')}
+recomputed metadata: {'shape': torch.Size([1, 1, 84, 64]), 'dtype': torch.float32, 'device': device(type='cpu')}
+tensor at position 283:
+saved metadata: {'shape': torch.Size([1, 1, 95, 64]), 'dtype': torch.float32, 'device': device(type='cpu')}
+recomputed metadata: {'shape': torch.Size([1, 1, 91, 64]), 'dtype': torch.float32, 'device': device(type='cpu')}
+tensor at position 284:
+saved metadata: {'shape': torch.Size([1, 1, 91, 64]), 'dtype': torch.float32, 'device': device(type='cpu')}
+recomputed metadata: {'shape': torch.Size([1, 1, 89, 64]), 'dtype': torch.float32, 'device': device(type='cpu')}
+tensor at position 285:
+saved metadata: {'shape': torch.Size([1, 1, 95, 64]), 'dtype': torch.float32, 'device': device(type='cpu')}
+recomputed metadata: {'shape': torch.Size([1, 1, 91, 64]), 'dtype': torch.float32, 'device': device(type='cpu')}
+tensor at position 286:
+saved metadata: {'shape': torch.Size([1, 1, 91]), 'dtype': torch.float32, 'device': device(type='cpu')}
+recomputed metadata: {'shape': torch.Size([1, 1, 89]), 'dtype': torch.float32, 'device': device(type='cpu')}
+tensor at position 287:
+saved metadata: {'shape': torch.Size([1, 1, 91, 64]), 'dtype': torch.float32, 'device': device(type='cpu')}
+recomputed metadata: {'shape': torch.Size([1, 1, 89, 64]), 'dtype': torch.float32, 'device': device(type='cpu')}
+.
+
+Tip: To see a more detailed error message, either pass `debug=True` to
+`torch.utils.checkpoint.checkpoint(...)` or wrap the code block
+with `with torch.utils.checkpoint.set_checkpoint_debug_enabled(True):` to
+enable checkpoint‑debug mode globally.
+
+
+🏁 Benchmark
+============================================================
+
+🔧 Quick Benchmark
+============================================================
+Command: python quick_benchmark.py
+✅ Quick Benchmark completed successfully.
+--- Last output (tail) ---
+Arena init @ 2025-08-28 11:54:06 ==
+Device: cpu | AMP: True (bf16)
+[LSHv2] params: 133,897,392 | flash3=no | reversible=True | tied_groups=6 over 24 layers
+NOTE: SyntheticDataGenerator unavailable, falling back to random tokens: can only concatenate tuple (not "list") to tuple
+
+🎯 Long-Arena Benchmark start @ 2025-08-28 11:54:08
+Output dir: /mnt/c/Users/XriyalVixen/OneDrive/Documents/Code/Projects/ProjectCadence/exp/EXP_20250827_lshv2/data/results/quick_benchmark
+Autocast enabled with dtype=bfloat16
+
+🔍 Sequence length: 1,024 (B=1)
+  01:     305.2 tok/s |  3.3552 s | Δmem  0.06 GB | peak  0.87 GB | ppl 38656.00
+  02:     238.0 tok/s |  4.3028 s | Δmem  0.06 GB | peak  0.87 GB | ppl 38656.00
+  03:     211.8 tok/s |  4.8337 s | Δmem  0.06 GB | peak  0.86 GB | ppl 36352.00
+📊 1,024: succ=100%, tps=252, lat=4.1639s, Δmem=0.06GB, peak=0.87GB, ppl=37888.00
+
+🔍 Sequence length: 2,048 (B=1)
+  01:     225.3 tok/s |  9.0895 s | Δmem  0.13 GB | peak  0.95 GB | ppl 38656.00
+  02:     287.9 tok/s |  7.1137 s | Δmem  0.15 GB | peak  0.95 GB | ppl 36352.00
+  03:     258.4 tok/s |  7.9244 s | Δmem  0.11 GB | peak  0.94 GB | ppl 36352.00
+📊 2,048: succ=100%, tps=257, lat=8.0425s, Δmem=0.13GB, peak=0.95GB, ppl=37120.00
+
+🔍 Sequence length: 4,096 (B=1)
+  01:     283.5 tok/s | 14.4481 s | Δmem  0.26 GB | peak  1.07 GB | ppl 38656.00
+  02:     296.9 tok/s | 13.7938 s | Δmem  0.24 GB | peak  1.07 GB | ppl 32000.00
+  03:     329.2 tok/s | 12.4417 s | Δmem  0.29 GB | peak  1.11 GB | ppl 38656.00
+📊 4,096: succ=100%, tps=303, lat=13.5612s, Δmem=0.27GB, peak=1.11GB, ppl=36437.33
+
+📈 Scaling fit:
+  latency ~ n^0.852 (R²=0.996)
+   memory ~ n^0.179 (R²=0.974)
+ throughput ~ n^0.134 (R²=0.836)
+💾 Saved results to: data/results/quick_benchmark and data/results/benchmark_summary.json
+🖼️ Plot saved: data/results/quick_benchmark/long_arena_benchmark.png
+
+🏁 Benchmark complete.
+  Max N: 4,096
+  Peak TPS: 303
+  Time complexity exponent α ≈ 0.852
+  Memory complexity exponent β ≈ 0.179
+🎉 Quick benchmark complete!
+
+⏭️ Consolidation skipped by flag
+
+⏭️ Packaging skipped by flag
+
+🎉 Pipeline Complete!
+============================================================
+Overall Success Rate: 5/6 (83.3%)
+Phase Results:
+  model_test: ✅ PASS
+  data_test: ✅ PASS
+  training: ❌ FAIL
+  benchmark: ✅ PASS
+  consolidation: ✅ PASS
+  packaging: ✅ PASS
+==> Logging to data/results/pipeline.log at 2025-08-28T11:58:00.181379
+🚀 LSH v2 Complete Pipeline Runner (EXP_20250827_lshv2)
+============================================================
+Quick mode     : True
+Skip training  : False
+Skip benchmark : False
+Test only      : False
+Smoke only     : False
+Profile subproc: False
+Skip Consolidation: True
+Skip Packaging : True
+Timeout (s)    : 3600
+
+🧰 Environment Sanity
+============================================================
+Base directory: /mnt/c/Users/XriyalVixen/OneDrive/Documents/Code/Projects/ProjectCadence/exp/EXP_20250827_lshv2 (EXP_20250827_lshv2)
+Timestamp: 2025-08-28 11:58:00
+PyTorch: 2.8.0+cpu | CUDA: no
+NumPy: 2.3.2
+
+🧪 Phase 1: Basic Tests
+
+🔧 Model Creation Test
+============================================================
+Command: python test_model.py
+❌ Model Creation Test failed (return code 1).
+--- Last error (tail) ---
+v/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1784, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/c/Users/XriyalVixen/OneDrive/Documents/Code/Projects/ProjectCadence/exp/EXP_20250827_lshv2/src/lsh_v2_model.py", line 1403, in forward
+    return self.core(x, depth=depth, total_layers=total_layers)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/c/Users/XriyalVixen/OneDrive/Documents/Code/Projects/ProjectCadence/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1773, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/c/Users/XriyalVixen/OneDrive/Documents/Code/Projects/ProjectCadence/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1784, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/c/Users/XriyalVixen/OneDrive/Documents/Code/Projects/ProjectCadence/exp/EXP_20250827_lshv2/src/lsh_v2_model.py", line 1346, in forward
+    m_f = self.f(x2n)
+          ^^^^^^^^^^^
+  File "/mnt/c/Users/XriyalVixen/OneDrive/Documents/Code/Projects/ProjectCadence/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1773, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/c/Users/XriyalVixen/OneDrive/Documents/Code/Projects/ProjectCadence/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1784, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/c/Users/XriyalVixen/OneDrive/Documents/Code/Projects/ProjectCadence/exp/EXP_20250827_lshv2/src/lsh_v2_model.py", line 708, in forward
+    out_even = self._intra_bucket_attn(
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: LSHv2AttentionCore._intra_bucket_attn() got an unexpected keyword argument 'extra_kv_mask'
+
+🔧 Synthetic Data Generation
+============================================================
+Command: python data/synthetic_data_generator.py
+✅ Synthetic Data Generation completed successfully.
+--- Last output (tail) ---
+🔧 Testing Synthetic Data Generation
+==================================================
+✅ Set Data task: 2048 tokens, 324 items
+✅ Odd One Out task: 2048 tokens, 97 sets
+✅ Fuzzy Regex task: 2048 tokens, 36 patterns
+✅ Mixed sequence: 16384 tokens, 4 tasks
+
+🎯 Data generator ready for training!
+
+🚀 Training
+============================================================
+
+🔧 Quick Training
+============================================================
+Command: python quick_train.py
+❌ Quick Training failed (return code 1).
+--- Last error (tail) ---
+v/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1784, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/c/Users/XriyalVixen/OneDrive/Documents/Code/Projects/ProjectCadence/exp/EXP_20250827_lshv2/src/lsh_v2_model.py", line 1403, in forward
+    return self.core(x, depth=depth, total_layers=total_layers)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/c/Users/XriyalVixen/OneDrive/Documents/Code/Projects/ProjectCadence/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1773, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/c/Users/XriyalVixen/OneDrive/Documents/Code/Projects/ProjectCadence/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1784, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/c/Users/XriyalVixen/OneDrive/Documents/Code/Projects/ProjectCadence/exp/EXP_20250827_lshv2/src/lsh_v2_model.py", line 1346, in forward
+    m_f = self.f(x2n)
+          ^^^^^^^^^^^
+  File "/mnt/c/Users/XriyalVixen/OneDrive/Documents/Code/Projects/ProjectCadence/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1773, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/c/Users/XriyalVixen/OneDrive/Documents/Code/Projects/ProjectCadence/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1784, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/c/Users/XriyalVixen/OneDrive/Documents/Code/Projects/ProjectCadence/exp/EXP_20250827_lshv2/src/lsh_v2_model.py", line 708, in forward
+    out_even = self._intra_bucket_attn(
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: LSHv2AttentionCore._intra_bucket_attn() got an unexpected keyword argument 'extra_kv_mask'
+
+🏁 Benchmark
+============================================================
+
+🔧 Quick Benchmark
+============================================================
+Command: python quick_benchmark.py
+✅ Quick Benchmark completed successfully.
+--- Last output (tail) ---
+== Long-Arena init @ 2025-08-28 11:59:20 ==
+Device: cpu | AMP: True (bf16)
+[LSHv2] params: 133,897,392 | flash3=no | reversible=True | tied_groups=6 over 24 layers
+NOTE: SyntheticDataGenerator unavailable, falling back to random tokens: can only concatenate tuple (not "list") to tuple
+
+🎯 Long-Arena Benchmark start @ 2025-08-28 11:59:22
+Output dir: /mnt/c/Users/XriyalVixen/OneDrive/Documents/Code/Projects/ProjectCadence/exp/EXP_20250827_lshv2/data/results/quick_benchmark
+Autocast enabled with dtype=bfloat16
+
+🔍 Sequence length: 1,024 (B=1)
+  ❌ Sample 1: exception (1/3) -> LSHv2AttentionCore._intra_bucket_attn() got an unexpected keyword argument 'extra_kv_mask'
+  ❌ Sample 2: exception (2/3) -> LSHv2AttentionCore._intra_bucket_attn() got an unexpected keyword argument 'extra_kv_mask'
+  ❌ Sample 3: exception (3/3) -> LSHv2AttentionCore._intra_bucket_attn() got an unexpected keyword argument 'extra_kv_mask'
+  🛑 Too many failures; aborting this sequence length
+📊 1,024: succ=0%, tps=0, lat=infs, Δmem=infGB, peak=infGB, ppl=inf
+⚠️ Skipping 2,048 due to low prior success (0%)
+⚠️ Skipping 4,096 due to low prior success (0%)
+⚠️ Not enough valid points for scaling law fit.
+💾 Saved results to: data/results/quick_benchmark and data/results/benchmark_summary.json
+🖼️ Plot saved: data/results/quick_benchmark/long_arena_benchmark.png
+
+🏁 Benchmark complete.
+🎉 Quick benchmark complete!
+
+⏭️ Consolidation skipped by flag
+
+⏭️ Packaging skipped by flag
+
+🎉 Pipeline Complete!
+============================================================
+Overall Success Rate: 4/6 (66.7%)
+Phase Results:
+  model_test: ❌ FAIL
+  data_test: ✅ PASS
+  training: ❌ FAIL
+  benchmark: ✅ PASS
+  consolidation: ✅ PASS
+  packaging: ✅ PASS
+==> Logging to data/results/pipeline.log at 2025-08-28T12:00:31.297016
+🚀 LSH v2 Complete Pipeline Runner (EXP_20250827_lshv2)
+============================================================
+Quick mode     : True
+Skip training  : False
+Skip benchmark : False
+Test only      : False
+Smoke only     : False
+Profile subproc: False
+Skip Consolidation: True
+Skip Packaging : True
+Timeout (s)    : 3600
+
+🧰 Environment Sanity
+============================================================
+Base directory: /mnt/c/Users/XriyalVixen/OneDrive/Documents/Code/Projects/ProjectCadence/exp/EXP_20250827_lshv2 (EXP_20250827_lshv2)
+Timestamp: 2025-08-28 12:00:31
+==> Logging to data/results/pipeline.log at 2025-08-28T12:01:55.489046
+🚀 LSH v2 Complete Pipeline Runner (EXP_20250827_lshv2)
+============================================================
+Quick mode     : True
+Skip training  : False
+Skip benchmark : True
+Test only      : False
+Smoke only     : False
+Profile subproc: False
+Skip Consolidation: True
+Skip Packaging : True
+Timeout (s)    : 3600
+
+🧰 Environment Sanity
+============================================================
+Base directory: /mnt/c/Users/XriyalVixen/OneDrive/Documents/Code/Projects/ProjectCadence/exp/EXP_20250827_lshv2 (EXP_20250827_lshv2)
+Timestamp: 2025-08-28 12:01:55
+PyTorch: 2.8.0+cpu | CUDA: no
+NumPy: 2.3.2
+
+🧪 Phase 1: Basic Tests
+
+🔧 Model Creation Test
+============================================================
+Command: python test_model.py
+✅ Model Creation Test completed successfully.
+--- Last output (tail) ---
+Creating LSH v2 model...
+[LSHv2] params: 133,897,392 | flash3=no | reversible=True | tied_groups=6 over 24 layers
+Testing forward pass...
+✅ Model test successful!
+Input shape: torch.Size([1, 1024])
+Output shape: torch.Size([1, 1024, 32000])
+Parameters: 133,897,392
+
+🔧 Synthetic Data Generation
+============================================================
+Command: python data/synthetic_data_generator.py
+✅ Synthetic Data Generation completed successfully.
+--- Last output (tail) ---
+🔧 Testing Synthetic Data Generation
+==================================================
+✅ Set Data task: 2048 tokens, 106 items
+✅ Odd One Out task: 2048 tokens, 31 sets
+✅ Fuzzy Regex task: 2048 tokens, 24 patterns
+✅ Mixed sequence: 16384 tokens, 6 tasks
+
+🎯 Data generator ready for training!
+
+🚀 Training
+============================================================
+
+🔧 Quick Training
+============================================================
+Command: python quick_train.py
+❌ Quick Training failed (return code 1).
+--- Last error (tail) ---
+ved metadata: {'shape': torch.Size([322]), 'dtype': torch.int64, 'device': device(type='cpu')}
+recomputed metadata: {'shape': torch.Size([355]), 'dtype': torch.int64, 'device': device(type='cpu')}
+tensor at position 273:
+saved metadata: {'shape': torch.Size([364]), 'dtype': torch.int64, 'device': device(type='cpu')}
+recomputed metadata: {'shape': torch.Size([327]), 'dtype': torch.int64, 'device': device(type='cpu')}
+tensor at position 291:
+saved metadata: {'shape': torch.Size([78]), 'dtype': torch.int64, 'device': device(type='cpu')}
+recomputed metadata: {'shape': torch.Size([72]), 'dtype': torch.int64, 'device': device(type='cpu')}
+tensor at position 301:
+saved metadata: {'shape': torch.Size([101]), 'dtype': torch.int64, 'device': device(type='cpu')}
+recomputed metadata: {'shape': torch.Size([98]), 'dtype': torch.int64, 'device': device(type='cpu')}
+tensor at position 311:
+saved metadata: {'shape': torch.Size([89]), 'dtype': torch.int64, 'device': device(type='cpu')}
+recomputed metadata: {'shape': torch.Size([98]), 'dtype': torch.int64, 'device': device(type='cpu')}
+tensor at position 326:
+saved metadata: {'shape': torch.Size([102]), 'dtype': torch.int64, 'device': device(type='cpu')}
+recomputed metadata: {'shape': torch.Size([96]), 'dtype': torch.int64, 'device': device(type='cpu')}
+tensor at position 336:
+saved metadata: {'shape': torch.Size([73]), 'dtype': torch.int64, 'device': device(type='cpu')}
+recomputed metadata: {'shape': torch.Size([92]), 'dtype': torch.int64, 'device': device(type='cpu')}
+tensor at position 346:
+saved metadata: {'shape': torch.Size([93]), 'dtype': torch.int64, 'device': device(type='cpu')}
+recomputed metadata: {'shape': torch.Size([80]), 'dtype': torch.int64, 'device': device(type='cpu')}
+.
+
+Tip: To see a more detailed error message, either pass `debug=True` to
+`torch.utils.checkpoint.checkpoint(...)` or wrap the code block
+with `with torch.utils.checkpoint.set_checkpoint_debug_enabled(True):` to
+enable checkpoint‑debug mode globally.
+
+
+⏭️ Benchmark skipped by flag
+
+⏭️ Consolidation skipped by flag
+
+⏭️ Packaging skipped by flag
+
+🎉 Pipeline Complete!
+============================================================
+Overall Success Rate: 5/6 (83.3%)
+Phase Results:
+  model_test: ✅ PASS
+  data_test: ✅ PASS
+  training: ❌ FAIL
+  benchmark: ✅ PASS
+  consolidation: ✅ PASS
+  packaging: ✅ PASS
+==> Logging to data/results/pipeline.log at 2025-08-28T12:08:25.098383
+🚀 LSH v2 Complete Pipeline Runner (EXP_20250827_lshv2)
+============================================================
+Quick mode     : False
+Skip training  : False
+Skip benchmark : False
+Test only      : False
+Smoke only     : False
+Profile subproc: False
+Skip Consolidation: False
+Skip Packaging : False
+Timeout (s)    : 3600
+
+🧰 Environment Sanity
+============================================================
+Base directory: /mnt/c/Users/XriyalVixen/OneDrive/Documents/Code/Projects/ProjectCadence/exp/EXP_20250827_lshv2 (EXP_20250827_lshv2)
+Timestamp: 2025-08-28 12:08:25
+PyTorch: 2.8.0+cpu | CUDA: no
+NumPy: 2.3.2
+
+🧪 Phase 1: Basic Tests
+
+🔧 Model Creation Test
+============================================================
+Command: python test_model.py
+==> Logging to data/results/pipeline.log at 2025-08-28T12:08:52.084532
+🚀 LSH v2 Complete Pipeline Runner (EXP_20250827_lshv2)
+============================================================
+Quick mode     : False
+Skip training  : False
+Skip benchmark : False
+Test only      : False
+Smoke only     : False
+Profile subproc: False
+Skip Consolidation: False
+Skip Packaging : False
+Timeout (s)    : 3600
+
+🧰 Environment Sanity
+============================================================
+Base directory: /mnt/c/Users/XriyalVixen/OneDrive/Documents/Code/Projects/ProjectCadence/exp/EXP_20250827_lshv2 (EXP_20250827_lshv2)
+Timestamp: 2025-08-28 12:08:52
+==> Logging to data/results/pipeline.log at 2025-08-28T12:09:05.508137
+🚀 LSH v2 Complete Pipeline Runner (EXP_20250827_lshv2)
+============================================================
+Quick mode     : True
+Skip training  : False
+Skip benchmark : True
+Test only      : False
+Smoke only     : False
+Profile subproc: False
+Skip Consolidation: True
+Skip Packaging : True
+Timeout (s)    : 3600
+
+🧰 Environment Sanity
+============================================================
+Base directory: /mnt/c/Users/XriyalVixen/OneDrive/Documents/Code/Projects/ProjectCadence/exp/EXP_20250827_lshv2 (EXP_20250827_lshv2)
+Timestamp: 2025-08-28 12:09:05
+PyTorch: 2.8.0+cpu | CUDA: no
+NumPy: 2.3.2
+
+🧪 Phase 1: Basic Tests
+
+🔧 Model Creation Test
+============================================================
+Command: python test_model.py
+✅ Model Creation Test completed successfully.
+--- Last output (tail) ---
+Creating LSH v2 model...
+[LSHv2] params: 133,897,392 | flash3=no | reversible=True | tied_groups=6 over 24 layers
+Testing forward pass...
+✅ Model test successful!
+Input shape: torch.Size([1, 1024])
+Output shape: torch.Size([1, 1024, 32000])
+Parameters: 133,897,392
+
+🔧 Synthetic Data Generation
+============================================================
+Command: python data/synthetic_data_generator.py
+✅ Synthetic Data Generation completed successfully.
+--- Last output (tail) ---
+🔧 Testing Synthetic Data Generation
+==================================================
+✅ Set Data task: 2048 tokens, 148 items
+✅ Odd One Out task: 2048 tokens, 20 sets
+✅ Fuzzy Regex task: 2048 tokens, 32 patterns
+✅ Mixed sequence: 16384 tokens, 4 tasks
+
+🎯 Data generator ready for training!
+
+🚀 Training
+============================================================
+
+🔧 Quick Training
+============================================================
+Command: python quick_train.py
+❌ Quick Training failed (return code 1).
+--- Last error (tail) ---
+ved metadata: {'shape': torch.Size([333]), 'dtype': torch.int64, 'device': device(type='cpu')}
+recomputed metadata: {'shape': torch.Size([384]), 'dtype': torch.int64, 'device': device(type='cpu')}
+tensor at position 273:
+saved metadata: {'shape': torch.Size([365]), 'dtype': torch.int64, 'device': device(type='cpu')}
+recomputed metadata: {'shape': torch.Size([324]), 'dtype': torch.int64, 'device': device(type='cpu')}
+tensor at position 291:
+saved metadata: {'shape': torch.Size([92]), 'dtype': torch.int64, 'device': device(type='cpu')}
+recomputed metadata: {'shape': torch.Size([102]), 'dtype': torch.int64, 'device': device(type='cpu')}
+tensor at position 301:
+saved metadata: {'shape': torch.Size([96]), 'dtype': torch.int64, 'device': device(type='cpu')}
+recomputed metadata: {'shape': torch.Size([84]), 'dtype': torch.int64, 'device': device(type='cpu')}
+tensor at position 311:
+saved metadata: {'shape': torch.Size([80]), 'dtype': torch.int64, 'device': device(type='cpu')}
+recomputed metadata: {'shape': torch.Size([82]), 'dtype': torch.int64, 'device': device(type='cpu')}
+tensor at position 326:
+saved metadata: {'shape': torch.Size([86]), 'dtype': torch.int64, 'device': device(type='cpu')}
+recomputed metadata: {'shape': torch.Size([81]), 'dtype': torch.int64, 'device': device(type='cpu')}
+tensor at position 336:
+saved metadata: {'shape': torch.Size([88]), 'dtype': torch.int64, 'device': device(type='cpu')}
+recomputed metadata: {'shape': torch.Size([103]), 'dtype': torch.int64, 'device': device(type='cpu')}
+tensor at position 346:
+saved metadata: {'shape': torch.Size([94]), 'dtype': torch.int64, 'device': device(type='cpu')}
+recomputed metadata: {'shape': torch.Size([84]), 'dtype': torch.int64, 'device': device(type='cpu')}
+.
+
+Tip: To see a more detailed error message, either pass `debug=True` to
+`torch.utils.checkpoint.checkpoint(...)` or wrap the code block
+with `with torch.utils.checkpoint.set_checkpoint_debug_enabled(True):` to
+enable checkpoint‑debug mode globally.
+
+
+⏭️ Benchmark skipped by flag
+
+⏭️ Consolidation skipped by flag
+
+⏭️ Packaging skipped by flag
+
+🎉 Pipeline Complete!
+============================================================
+Overall Success Rate: 5/6 (83.3%)
+Phase Results:
+  model_test: ✅ PASS
+  data_test: ✅ PASS
+  training: ❌ FAIL
+  benchmark: ✅ PASS
+  consolidation: ✅ PASS
+  packaging: ✅ PASS
+==> Logging to data/results/pipeline.log at 2025-08-28T12:10:59.566580
+🚀 LSH v2 Complete Pipeline Runner (EXP_20250827_lshv2)
+============================================================
+Quick mode     : True
+Skip training  : False
+Skip benchmark : True
+Test only      : False
+Smoke only     : False
+Profile subproc: False
+Skip Consolidation: True
+Skip Packaging : True
+Timeout (s)    : 3600
+
+🧰 Environment Sanity
+============================================================
+Base directory: /mnt/c/Users/XriyalVixen/OneDrive/Documents/Code/Projects/ProjectCadence/exp/EXP_20250827_lshv2 (EXP_20250827_lshv2)
+Timestamp: 2025-08-28 12:10:59
+PyTorch: 2.8.0+cpu | CUDA: no
+NumPy: 2.3.2
+
+🧪 Phase 1: Basic Tests
+
+🔧 Model Creation Test
+============================================================
+Command: python test_model.py
+✅ Model Creation Test completed successfully.
+--- Last output (tail) ---
+Creating LSH v2 model...
+[LSHv2] params: 133,897,392 | flash3=no | reversible=True | tied_groups=6 over 24 layers
+Testing forward pass...
+✅ Model test successful!
+Input shape: torch.Size([1, 1024])
+Output shape: torch.Size([1, 1024, 32000])
+Parameters: 133,897,392
+
+🔧 Synthetic Data Generation
+============================================================
+Command: python data/synthetic_data_generator.py
+✅ Synthetic Data Generation completed successfully.
+--- Last output (tail) ---
+🔧 Testing Synthetic Data Generation
+==================================================
+✅ Set Data task: 2048 tokens, 463 items
+✅ Odd One Out task: 2048 tokens, 77 sets
+✅ Fuzzy Regex task: 2048 tokens, 13 patterns
+✅ Mixed sequence: 16384 tokens, 4 tasks
+
+🎯 Data generator ready for training!
+
+🚀 Training
+============================================================
+
+🔧 Quick Training
+============================================================
+Command: python quick_train.py
+❌ Quick Training failed (return code 1).
+--- Last error (tail) ---
+ed metadata: {'shape': torch.Size([330]), 'dtype': torch.int64, 'device': device(type='cpu')}
+recomputed metadata: {'shape': torch.Size([346]), 'dtype': torch.int64, 'device': device(type='cpu')}
+tensor at position 263:
+saved metadata: {'shape': torch.Size([345]), 'dtype': torch.int64, 'device': device(type='cpu')}
+recomputed metadata: {'shape': torch.Size([348]), 'dtype': torch.int64, 'device': device(type='cpu')}
+tensor at position 273:
+saved metadata: {'shape': torch.Size([361]), 'dtype': torch.int64, 'device': device(type='cpu')}
+recomputed metadata: {'shape': torch.Size([342]), 'dtype': torch.int64, 'device': device(type='cpu')}
+tensor at position 291:
+saved metadata: {'shape': torch.Size([89]), 'dtype': torch.int64, 'device': device(type='cpu')}
+recomputed metadata: {'shape': torch.Size([92]), 'dtype': torch.int64, 'device': device(type='cpu')}
+tensor at position 301:
+saved metadata: {'shape': torch.Size([91]), 'dtype': torch.int64, 'device': device(type='cpu')}
+recomputed metadata: {'shape': torch.Size([88]), 'dtype': torch.int64, 'device': device(type='cpu')}
+tensor at position 326:
+saved metadata: {'shape': torch.Size([77]), 'dtype': torch.int64, 'device': device(type='cpu')}
+recomputed metadata: {'shape': torch.Size([90]), 'dtype': torch.int64, 'device': device(type='cpu')}
+tensor at position 336:
+saved metadata: {'shape': torch.Size([87]), 'dtype': torch.int64, 'device': device(type='cpu')}
+recomputed metadata: {'shape': torch.Size([99]), 'dtype': torch.int64, 'device': device(type='cpu')}
+tensor at position 346:
+saved metadata: {'shape': torch.Size([104]), 'dtype': torch.int64, 'device': device(type='cpu')}
+recomputed metadata: {'shape': torch.Size([79]), 'dtype': torch.int64, 'device': device(type='cpu')}
+.
+
+Tip: To see a more detailed error message, either pass `debug=True` to
+`torch.utils.checkpoint.checkpoint(...)` or wrap the code block
+with `with torch.utils.checkpoint.set_checkpoint_debug_enabled(True):` to
+enable checkpoint‑debug mode globally.
+
+
+⏭️ Benchmark skipped by flag
+
+⏭️ Consolidation skipped by flag
+
+⏭️ Packaging skipped by flag
+
+🎉 Pipeline Complete!
+============================================================
+Overall Success Rate: 5/6 (83.3%)
+Phase Results:
+  model_test: ✅ PASS
+  data_test: ✅ PASS
+  training: ❌ FAIL
+  benchmark: ✅ PASS
+  consolidation: ✅ PASS
+  packaging: ✅ PASS
+==> Logging to data/results/pipeline.log at 2025-08-28T12:17:40.417563
+🚀 LSH v2 Complete Pipeline Runner (EXP_20250827_lshv2)
+============================================================
+Quick mode     : True
+Skip training  : False
+Skip benchmark : True
+Test only      : False
+Smoke only     : False
+Profile subproc: False
+Skip Consolidation: True
+Skip Packaging : True
+Timeout (s)    : 3600
+
+🧰 Environment Sanity
+============================================================
+Base directory: /mnt/c/Users/XriyalVixen/OneDrive/Documents/Code/Projects/ProjectCadence/exp/EXP_20250827_lshv2 (EXP_20250827_lshv2)
+Timestamp: 2025-08-28 12:17:40
+PyTorch: 2.8.0+cpu | CUDA: no
+NumPy: 2.3.2
+
+🧪 Phase 1: Basic Tests
+
+🔧 Model Creation Test
+============================================================
+Command: python test_model.py
+✅ Model Creation Test completed successfully.
+--- Last output (tail) ---
+Creating LSH v2 model...
+[LSHv2] params: 133,897,392 | flash3=no | reversible=True | tied_groups=6 over 24 layers
+Testing forward pass...
+✅ Model test successful!
+Input shape: torch.Size([1, 1024])
+Output shape: torch.Size([1, 1024, 32000])
+Parameters: 133,897,392
+
+🔧 Synthetic Data Generation
+============================================================
+Command: python data/synthetic_data_generator.py
+✅ Synthetic Data Generation completed successfully.
+--- Last output (tail) ---
+🔧 Testing Synthetic Data Generation
+==================================================
+✅ Set Data task: 2048 tokens, 255 items
+✅ Odd One Out task: 2048 tokens, 76 sets
+✅ Fuzzy Regex task: 2048 tokens, 42 patterns
+✅ Mixed sequence: 16384 tokens, 3 tasks
+
+🎯 Data generator ready for training!
+
+🚀 Training
+============================================================
+
+🔧 Quick Training
+============================================================
+Command: python quick_train.py
+❌ Quick Training failed (return code 1).
+--- Last error (tail) ---
+ved metadata: {'shape': torch.Size([329]), 'dtype': torch.int64, 'device': device(type='cpu')}
+recomputed metadata: {'shape': torch.Size([325]), 'dtype': torch.int64, 'device': device(type='cpu')}
+tensor at position 273:
+saved metadata: {'shape': torch.Size([358]), 'dtype': torch.int64, 'device': device(type='cpu')}
+recomputed metadata: {'shape': torch.Size([338]), 'dtype': torch.int64, 'device': device(type='cpu')}
+tensor at position 291:
+saved metadata: {'shape': torch.Size([89]), 'dtype': torch.int64, 'device': device(type='cpu')}
+recomputed metadata: {'shape': torch.Size([94]), 'dtype': torch.int64, 'device': device(type='cpu')}
+tensor at position 301:
+saved metadata: {'shape': torch.Size([91]), 'dtype': torch.int64, 'device': device(type='cpu')}
+recomputed metadata: {'shape': torch.Size([99]), 'dtype': torch.int64, 'device': device(type='cpu')}
+tensor at position 311:
+saved metadata: {'shape': torch.Size([88]), 'dtype': torch.int64, 'device': device(type='cpu')}
+recomputed metadata: {'shape': torch.Size([75]), 'dtype': torch.int64, 'device': device(type='cpu')}
+tensor at position 326:
+saved metadata: {'shape': torch.Size([87]), 'dtype': torch.int64, 'device': device(type='cpu')}
+recomputed metadata: {'shape': torch.Size([103]), 'dtype': torch.int64, 'device': device(type='cpu')}
+tensor at position 336:
+saved metadata: {'shape': torch.Size([80]), 'dtype': torch.int64, 'device': device(type='cpu')}
+recomputed metadata: {'shape': torch.Size([78]), 'dtype': torch.int64, 'device': device(type='cpu')}
+tensor at position 346:
+saved metadata: {'shape': torch.Size([101]), 'dtype': torch.int64, 'device': device(type='cpu')}
+recomputed metadata: {'shape': torch.Size([87]), 'dtype': torch.int64, 'device': device(type='cpu')}
+.
+
+Tip: To see a more detailed error message, either pass `debug=True` to
+`torch.utils.checkpoint.checkpoint(...)` or wrap the code block
+with `with torch.utils.checkpoint.set_checkpoint_debug_enabled(True):` to
+enable checkpoint‑debug mode globally.
+
+
+⏭️ Benchmark skipped by flag
+
+⏭️ Consolidation skipped by flag
+
+⏭️ Packaging skipped by flag
+
+🎉 Pipeline Complete!
+============================================================
+Overall Success Rate: 5/6 (83.3%)
+Phase Results:
+  model_test: ✅ PASS
+  data_test: ✅ PASS
+  training: ❌ FAIL
+  benchmark: ✅ PASS
+  consolidation: ✅ PASS
+  packaging: ✅ PASS
+==> Logging to data/results/pipeline.log at 2025-08-28T13:04:25.777517
+🚀 LSH v2 Complete Pipeline Runner (EXP_20250827_lshv2)
+============================================================
+Quick mode     : True
+Skip training  : False
+Skip benchmark : True
+Test only      : False
+Smoke only     : False
+Profile subproc: False
+Skip Consolidation: True
+Skip Packaging : True
+Timeout (s)    : 3600
+
+🧰 Environment Sanity
+============================================================
+Base directory: /mnt/c/Users/XriyalVixen/OneDrive/Documents/Code/Projects/ProjectCadence/exp/EXP_20250827_lshv2 (EXP_20250827_lshv2)
+Timestamp: 2025-08-28 13:04:25
+PyTorch: 2.8.0+cpu | CUDA: no
+NumPy: 2.3.2
+
+🧪 Phase 1: Basic Tests
+
+🔧 Model Creation Test
+============================================================
+Command: python test_model.py
+✅ Model Creation Test completed successfully.
+--- Last output (tail) ---
+Creating LSH v2 model...
+[LSHv2] params: 133,897,392 | flash3=no | reversible=True | tied_groups=6 over 24 layers
+Testing forward pass...
+✅ Model test successful!
+Input shape: torch.Size([1, 1024])
+Output shape: torch.Size([1, 1024, 32000])
+Parameters: 133,897,392
+
+🔧 Synthetic Data Generation
+============================================================
+Command: python data/synthetic_data_generator.py
+✅ Synthetic Data Generation completed successfully.
+--- Last output (tail) ---
+🔧 Testing Synthetic Data Generation
+==================================================
+✅ Set Data task: 2048 tokens, 316 items
+✅ Odd One Out task: 2048 tokens, 100 sets
+✅ Fuzzy Regex task: 2048 tokens, 36 patterns
+✅ Mixed sequence: 16384 tokens, 4 tasks
+
+🎯 Data generator ready for training!
+
+🚀 Training
+============================================================
+
+🔧 Quick Training
+============================================================
+Command: python quick_train.py
+❌ Quick Training failed (return code 1).
+--- Last error (tail) ---
+ects/ProjectCadence/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1773, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/c/Users/XriyalVixen/OneDrive/Documents/Code/Projects/ProjectCadence/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1784, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/c/Users/XriyalVixen/OneDrive/Documents/Code/Projects/ProjectCadence/exp/EXP_20250827_lshv2/src/lsh_v2_model.py", line 743, in forward
+    self.mem.write(k_comp.unsqueeze(1), v_comp.unsqueeze(1))
+  File "/mnt/c/Users/XriyalVixen/OneDrive/Documents/Code/Projects/ProjectCadence/.venv/lib/python3.12/site-packages/torch/utils/_contextlib.py", line 120, in decorate_context
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/c/Users/XriyalVixen/OneDrive/Documents/Code/Projects/ProjectCadence/exp/EXP_20250827_lshv2/src/lsh_v2_model.py", line 368, in write
+    k = self.key_proj(k_tok).mean(dim=(0, 1)).detach()
+        ^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/c/Users/XriyalVixen/OneDrive/Documents/Code/Projects/ProjectCadence/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1773, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/c/Users/XriyalVixen/OneDrive/Documents/Code/Projects/ProjectCadence/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1784, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/c/Users/XriyalVixen/OneDrive/Documents/Code/Projects/ProjectCadence/.venv/lib/python3.12/site-packages/torch/nn/modules/linear.py", line 125, in forward
+    return F.linear(input, self.weight, self.bias)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: mat1 and mat2 shapes cannot be multiplied (4099x192 and 384x192)
+
+⏭️ Benchmark skipped by flag
+
+⏭️ Consolidation skipped by flag
+
+⏭️ Packaging skipped by flag
+
+🎉 Pipeline Complete!
+============================================================
+Overall Success Rate: 5/6 (83.3%)
+Phase Results:
+  model_test: ✅ PASS
+  data_test: ✅ PASS
+  training: ❌ FAIL
+  benchmark: ✅ PASS
+  consolidation: ✅ PASS
+  packaging: ✅ PASS

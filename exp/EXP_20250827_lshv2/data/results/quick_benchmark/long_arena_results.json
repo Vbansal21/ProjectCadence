@@ -1,0 +1,47 @@
+{
+  "timestamp": "2025-08-28 11:59:22",
+  "device": "cpu",
+  "amp": {
+    "enabled": true,
+    "dtype": "bf16"
+  },
+  "model": {
+    "parameters": 133897392,
+    "vocab_size": 32000
+  },
+  "config": {
+    "sequence_lengths": [
+      1024,
+      2048,
+      4096
+    ],
+    "num_samples_per_length": 3,
+    "batch_size": 1,
+    "max_memory_gb": 8.0,
+    "timeout_seconds": 60
+  },
+  "results": {
+    "sequence_lengths": [
+      1024
+    ],
+    "latency_s": [
+      Infinity
+    ],
+    "throughput_tok_s": [
+      0.0
+    ],
+    "mem_used_gb": [
+      Infinity
+    ],
+    "mem_peak_gb": [
+      Infinity
+    ],
+    "perplexity": [
+      Infinity
+    ],
+    "success_rate": [
+      0.0
+    ]
+  },
+  "scaling": {}
+}

@@ -1,0 +1,28 @@
+{
+  "pipeline_status": "completed",
+  "timestamp": "2025-08-28 10:47:19",
+  "components": {
+    "benchmark_summary.json": {
+      "timestamp": "2025-08-28 10:47:16",
+      "device": "cpu",
+      "model_parameters": 133897392,
+      "max_seq_len": 4096,
+      "peak_throughput_tok_s": 351.8337257756348,
+      "scaling": {
+        "time_alpha": 0.8497334390098119,
+        "time_r2": 0.9984190440248955,
+        "mem_beta": 0.16377401024323993,
+        "mem_r2": 0.9947879699743104,
+        "tps_gamma": 0.10812400190057272,
+        "tps_r2": 0.9940971784825767,
+        "max_seq_len": 4096,
+        "peak_tps": 351.8337257756348,
+        "min_mem_per_token_gb": 0.00026505813002586365
+      }
+    }
+  },
+  "paths": [
+    "data/results/benchmark_summary.json",
+    "data/results/quick_benchmark/benchmark_summary.json"
+  ]
+}

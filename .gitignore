@@ -21,3 +21,5 @@ data/**
 Thumbs.db
 .vscode/
 .idea/
+*.pt
+**/*.pt

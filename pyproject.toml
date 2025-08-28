@@ -1,0 +1,10 @@
+[tool.ruff]
+line-length = 88
+target-version = "py312"
+
+[tool.ruff.format]
+quote-style = "double"
+skip-magic-trailing-comma = false
+indent-style = "space"
+docstring-code-format = true
+docstring-code-line-length = 88

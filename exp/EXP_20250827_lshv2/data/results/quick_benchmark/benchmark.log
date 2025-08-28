@@ -1,0 +1,135 @@
+== Long-Arena init @ 2025-08-28 10:45:45 ==
+Device: cpu | AMP: True (bf16)
+NOTE: SyntheticDataGenerator unavailable, falling back to random tokens: can only concatenate tuple (not "list") to tuple
+
+🎯 Long-Arena Benchmark start @ 2025-08-28 10:45:48
+Output dir: /mnt/c/Users/XriyalVixen/OneDrive/Documents/Code/Projects/ProjectCadence/exp/EXP_20250827_lshv2/data/results/quick_benchmark
+Autocast enabled with dtype=bfloat16
+
+🔍 Sequence length: 1,024 (B=1)
+  01:     349.1 tok/s |  2.9334 s | Δmem  0.05 GB | peak  0.86 GB | ppl 36352.00
+  02:     354.2 tok/s |  2.8909 s | Δmem  0.06 GB | peak  0.86 GB | ppl 36352.00
+  03:     205.3 tok/s |  4.9884 s | Δmem  0.06 GB | peak  0.87 GB | ppl 36352.00
+📊 1,024: succ=100%, tps=303, lat=3.6042s, Δmem=0.06GB, peak=0.87GB, ppl=36352.00
+
+🔍 Sequence length: 2,048 (B=1)
+  01:     330.8 tok/s |  6.1906 s | Δmem  0.14 GB | peak  0.96 GB | ppl 38656.00
+  02:     354.9 tok/s |  5.7710 s | Δmem  0.15 GB | peak  0.95 GB | ppl 36352.00
+  03:     303.4 tok/s |  6.7495 s | Δmem  0.13 GB | peak  0.93 GB | ppl 36352.00
+📊 2,048: succ=100%, tps=330, lat=6.2370s, Δmem=0.14GB, peak=0.96GB, ppl=37120.00
+
+🔍 Sequence length: 4,096 (B=1)
+  01:     324.6 tok/s | 12.6196 s | Δmem  0.27 GB | peak  1.07 GB | ppl 38656.00
+  02:     343.3 tok/s | 11.9306 s | Δmem  0.24 GB | peak  1.07 GB | ppl 36352.00
+  03:     387.6 tok/s | 10.5673 s | Δmem  0.26 GB | peak  1.09 GB | ppl 36352.00
+📊 4,096: succ=100%, tps=352, lat=11.7059s, Δmem=0.26GB, peak=1.09GB, ppl=37120.00
+
+📈 Scaling fit:
+  latency ~ n^0.850 (R²=0.998)
+   memory ~ n^0.164 (R²=0.995)
+ throughput ~ n^0.108 (R²=0.994)
+💾 Saved results to: data/results/quick_benchmark and data/results/benchmark_summary.json
+🖼️ Plot saved: data/results/quick_benchmark/long_arena_benchmark.png
+
+🏁 Benchmark complete.
+  Max N: 4,096
+  Peak TPS: 352
+  Time complexity exponent α ≈ 0.850
+  Memory complexity exponent β ≈ 0.164
+== Long-Arena init @ 2025-08-28 11:42:24 ==
+Device: cpu | AMP: True (bf16)
+NOTE: SyntheticDataGenerator unavailable, falling back to random tokens: can only concatenate tuple (not "list") to tuple
+
+🎯 Long-Arena Benchmark start @ 2025-08-28 11:42:27
+Output dir: /mnt/c/Users/XriyalVixen/OneDrive/Documents/Code/Projects/ProjectCadence/exp/EXP_20250827_lshv2/data/results/quick_benchmark
+Autocast enabled with dtype=bfloat16
+
+🔍 Sequence length: 1,024 (B=1)
+  01:     276.8 tok/s |  3.7000 s | Δmem  0.07 GB | peak  0.87 GB | ppl 38656.00
+  02:     262.3 tok/s |  3.9039 s | Δmem  0.06 GB | peak  0.87 GB | ppl 38656.00
+  03:     274.6 tok/s |  3.7291 s | Δmem  0.06 GB | peak  0.87 GB | ppl 36352.00
+📊 1,024: succ=100%, tps=271, lat=3.7776s, Δmem=0.06GB, peak=0.87GB, ppl=37888.00
+
+🔍 Sequence length: 2,048 (B=1)
+  01:     354.1 tok/s |  5.7840 s | Δmem  0.09 GB | peak  0.93 GB | ppl 38656.00
+  02:     350.8 tok/s |  5.8376 s | Δmem  0.15 GB | peak  0.96 GB | ppl 36352.00
+  03:     307.8 tok/s |  6.6540 s | Δmem  0.13 GB | peak  0.93 GB | ppl 36352.00
+📊 2,048: succ=100%, tps=338, lat=6.0919s, Δmem=0.12GB, peak=0.96GB, ppl=37120.00
+
+🔍 Sequence length: 4,096 (B=1)
+  01:     427.2 tok/s |  9.5872 s | Δmem  0.31 GB | peak  1.12 GB | ppl 38656.00
+  02:     378.6 tok/s | 10.8178 s | Δmem  0.33 GB | peak  1.14 GB | ppl 32000.00
+  03:     394.5 tok/s | 10.3831 s | Δmem  0.31 GB | peak  1.11 GB | ppl 38656.00
+📊 4,096: succ=100%, tps=400, lat=10.2627s, Δmem=0.32GB, peak=1.14GB, ppl=36437.33
+
+📈 Scaling fit:
+  latency ~ n^0.721 (R²=0.999)
+   memory ~ n^0.195 (R²=0.972)
+ throughput ~ n^0.280 (R²=0.995)
+💾 Saved results to: data/results/quick_benchmark and data/results/benchmark_summary.json
+🖼️ Plot saved: data/results/quick_benchmark/long_arena_benchmark.png
+
+🏁 Benchmark complete.
+  Max N: 4,096
+  Peak TPS: 400
+  Time complexity exponent α ≈ 0.721
+  Memory complexity exponent β ≈ 0.195
+== Long-Arena init @ 2025-08-28 11:54:06 ==
+Device: cpu | AMP: True (bf16)
+NOTE: SyntheticDataGenerator unavailable, falling back to random tokens: can only concatenate tuple (not "list") to tuple
+
+🎯 Long-Arena Benchmark start @ 2025-08-28 11:54:08
+Output dir: /mnt/c/Users/XriyalVixen/OneDrive/Documents/Code/Projects/ProjectCadence/exp/EXP_20250827_lshv2/data/results/quick_benchmark
+Autocast enabled with dtype=bfloat16
+
+🔍 Sequence length: 1,024 (B=1)
+  01:     305.2 tok/s |  3.3552 s | Δmem  0.06 GB | peak  0.87 GB | ppl 38656.00
+  02:     238.0 tok/s |  4.3028 s | Δmem  0.06 GB | peak  0.87 GB | ppl 38656.00
+  03:     211.8 tok/s |  4.8337 s | Δmem  0.06 GB | peak  0.86 GB | ppl 36352.00
+📊 1,024: succ=100%, tps=252, lat=4.1639s, Δmem=0.06GB, peak=0.87GB, ppl=37888.00
+
+🔍 Sequence length: 2,048 (B=1)
+  01:     225.3 tok/s |  9.0895 s | Δmem  0.13 GB | peak  0.95 GB | ppl 38656.00
+  02:     287.9 tok/s |  7.1137 s | Δmem  0.15 GB | peak  0.95 GB | ppl 36352.00
+  03:     258.4 tok/s |  7.9244 s | Δmem  0.11 GB | peak  0.94 GB | ppl 36352.00
+📊 2,048: succ=100%, tps=257, lat=8.0425s, Δmem=0.13GB, peak=0.95GB, ppl=37120.00
+
+🔍 Sequence length: 4,096 (B=1)
+  01:     283.5 tok/s | 14.4481 s | Δmem  0.26 GB | peak  1.07 GB | ppl 38656.00
+  02:     296.9 tok/s | 13.7938 s | Δmem  0.24 GB | peak  1.07 GB | ppl 32000.00
+  03:     329.2 tok/s | 12.4417 s | Δmem  0.29 GB | peak  1.11 GB | ppl 38656.00
+📊 4,096: succ=100%, tps=303, lat=13.5612s, Δmem=0.27GB, peak=1.11GB, ppl=36437.33
+
+📈 Scaling fit:
+  latency ~ n^0.852 (R²=0.996)
+   memory ~ n^0.179 (R²=0.974)
+ throughput ~ n^0.134 (R²=0.836)
+💾 Saved results to: data/results/quick_benchmark and data/results/benchmark_summary.json
+🖼️ Plot saved: data/results/quick_benchmark/long_arena_benchmark.png
+
+🏁 Benchmark complete.
+  Max N: 4,096
+  Peak TPS: 303
+  Time complexity exponent α ≈ 0.852
+  Memory complexity exponent β ≈ 0.179
+== Long-Arena init @ 2025-08-28 11:59:20 ==
+Device: cpu | AMP: True (bf16)
+NOTE: SyntheticDataGenerator unavailable, falling back to random tokens: can only concatenate tuple (not "list") to tuple
+
+🎯 Long-Arena Benchmark start @ 2025-08-28 11:59:22
+Output dir: /mnt/c/Users/XriyalVixen/OneDrive/Documents/Code/Projects/ProjectCadence/exp/EXP_20250827_lshv2/data/results/quick_benchmark
+Autocast enabled with dtype=bfloat16
+
+🔍 Sequence length: 1,024 (B=1)
+  ❌ Sample 1: exception (1/3) -> LSHv2AttentionCore._intra_bucket_attn() got an unexpected keyword argument 'extra_kv_mask'
+  ❌ Sample 2: exception (2/3) -> LSHv2AttentionCore._intra_bucket_attn() got an unexpected keyword argument 'extra_kv_mask'
+  ❌ Sample 3: exception (3/3) -> LSHv2AttentionCore._intra_bucket_attn() got an unexpected keyword argument 'extra_kv_mask'
+  🛑 Too many failures; aborting this sequence length
+📊 1,024: succ=0%, tps=0, lat=infs, Δmem=infGB, peak=infGB, ppl=inf
+⚠️ Skipping 2,048 due to low prior success (0%)
+⚠️ Skipping 4,096 due to low prior success (0%)
+⚠️ Not enough valid points for scaling law fit.
+💾 Saved results to: data/results/quick_benchmark and data/results/benchmark_summary.json
+🖼️ Plot saved: data/results/quick_benchmark/long_arena_benchmark.png
+
+🏁 Benchmark complete.

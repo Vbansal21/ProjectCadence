@@ -1,0 +1,21 @@
+{
+    "model_size": "100M",
+    "vocab_size": 32000,
+    "seq_length": 4096,
+    "batch_size": 1,
+    "num_epochs": 1,
+    "learning_rate": 0.0001,
+    "weight_decay": 0.01,
+    "warmup_steps": 1000,
+    "gradient_clip": 1.0,
+    "save_every": 20,
+    "eval_every": 10,
+    "log_every": 1,
+    "num_train_sequences": 10,
+    "num_eval_sequences": 5,
+    "profile_components": true,
+    "profile_memory": true,
+    "save_profiles": true,
+    "use_amp": true,
+    "amp_dtype": "bf16"
+}
