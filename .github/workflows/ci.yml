@@ -3,8 +3,18 @@ name: CI
 on:
   push:
     branches: [main, develop, "feature/**", "release/**", "hotfix/**"]
+    paths:
+      - ".github/workflows/ci.yml"                # allow CI edits to run CI
+      - "weeks/W01_*/**"                          # any change in Week 1
+      - "weeks/W02_*/**"                          # any change in Week 2
+      - "weeks/W03_*/**"                          # any change in Week 3
   pull_request:
     branches: [main, develop]
+    paths:
+      - ".github/workflows/ci.yml"                # allow CI edits to run CI
+      - "weeks/W01_*/**"                          # any change in Week 1
+      - "weeks/W02_*/**"                          # any change in Week 2
+      - "weeks/W03_*/**"                          # any change in Week 3
 
 permissions:
   contents: read
