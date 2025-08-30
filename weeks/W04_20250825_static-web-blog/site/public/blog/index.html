@@ -23,18 +23,18 @@
 
         <!-- Tag filter: swaps list via HTMX (pulls a static partial) -->
         <div class="mb-6 flex flex-wrap items-center gap-2 text-sm">
-            <button class="tag" hx-get="./partials/list.html" hx-target="#post-list" hx-swap="innerHTML">All</button>
-            <button class="tag" hx-get="./partials/list.html?tag=accessibility" hx-target="#post-list"
+            <button class="tag" hx-get="./_partials/list.html" hx-target="#post-list" hx-swap="innerHTML">All</button>
+            <button class="tag" hx-get="./_partials/list.html?tag=accessibility" hx-target="#post-list"
                 hx-swap="innerHTML">Accessibility</button>
-            <button class="tag" hx-get="./partials/list.html?tag=css" hx-target="#post-list"
+            <button class="tag" hx-get="./_partials/list.html?tag=css" hx-target="#post-list"
                 hx-swap="innerHTML">CSS</button>
-            <button class="tag" hx-get="./partials/list.html?tag=js" hx-target="#post-list"
+            <button class="tag" hx-get="./_partials/list.html?tag=js" hx-target="#post-list"
                 hx-swap="innerHTML">JS</button>
-            <button class="tag" hx-get="./partials/list.html?tag=d3" hx-target="#post-list"
+            <button class="tag" hx-get="./_partials/list.html?tag=d3" hx-target="#post-list"
                 hx-swap="innerHTML">D3</button>
         </div>
 
-        <div id="post-list" hx-get="./partials/list.html" hx-trigger="load" hx-swap="innerHTML" class="grid gap-6">
+        <div id="post-list" hx-get="./_partials/list.html" hx-trigger="load" hx-swap="innerHTML" class="grid gap-6">
             <p class="text-neutral-500">Loading…</p>
         </div>
     </main>

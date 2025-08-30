@@ -12,3 +12,10 @@
     setTimeout(() => el.remove(), 2500);
   });
 })();
+// Minimal HTMX logging
+document.addEventListener('htmx:beforeRequest', (e) => {
+  console.log('[HTMX] GET ->', e.detail.path, e.detail.verb);
+});
+document.addEventListener('htmx:responseError', (e) => {
+  console.error('[HTMX] ERROR', e.detail.xhr.status, e.detail.xhr.responseURL);
+});
