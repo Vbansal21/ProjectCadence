@@ -1,34 +1,31 @@
 # Week 3 — Git-Flow + CI Foundations (Dev Notes)
 
-**Window:** 2025-08-18 → 2025-08-24 (slipped; executing on 2025-08-30)
-**Intent:** Stand up disciplined branching and a reusable CI that runs lint + build + tests across languages in this monorepo.
-**Why this exists:** Future weeks should be reproducible without bespoke setup; CI enforces that through automation.
+**Window:** 2025-08-18 → 2025-08-24 (executing on 2025-08-30)
+**Intent:** Use real Week 1 tests + Week 2 build to stand up CI that auto-lints, builds, and runs tests.
 
 ## Chosen shape
 
-- Branching: Git-Flow lite — `main` (release), `develop` (integration), short-lived `feature/*`, occasional `hotfix/*`.
-- CI: GitHub Actions with conditional jobs so empty stacks don't fail (Python, C++, Node, Docs).
-- Pre-commit: formatting + hygiene to catch slop locally before CI.
+- Branches: `main` (release), `develop` (integration), short-lived `feature/*`.
+- CI: GitHub Actions with jobs for pre-commit, Week 1 tests, Week 2 build.
+- Guardrails: conditional steps so "missing week dir" doesn't fail CI.
 
 ## Today's log
 
-- Created `develop` from `main` and pushed to origin.
-- Generated Week-3 workspace via `cadence.py` and set `weeks/current`.
-- Added `.pre-commit-config.yaml` and installed hooks.
-- Dropped a smoke test and CI workflow to see one green pass.
+- Confirmed `develop` branch exists and is tracking origin.
+- Added CI workflow (pre-commit + W01 tests + W02 build).
+- First PR to `main` will serve as the Week 3 proof.
 
 ## Pitfalls I'm watching
 
-- "No tests found" as CI failure: guarded by conditional jobs.
-- Pre-commit latency on first run (cache warms after).
-- Line-ending churn on Windows; `.gitattributes` forces LF.
-- Tooling mismatch: repo-level env vs per-project — keeping repo-level for speed.
+- CI toolchain vs. local flags (e.g., `-march=native` causing illegal instruction on runners).
+- `CTest` not discovering tests if `enable_testing()` / `add_test()` misconfigured.
+- Flaky network on dependency fetches (re-run job is fine).
 
 ## Decisions
 
-- Keep Git-Flow for history clarity; can pivot to trunk on solo spikes.
-- Keep CI minimal now; add coverage + CodeQL later when Week-3 closes.
+- Start minimal; add coverage/CodeQL once green is consistent.
+- Keep pre-commit as the first gate (fast feedback locally + in CI).
 
-## After-action (to write once green)
+## After-action
 
-- What broke, what fixed it, average pipeline time, and changes I'll carry forward.
+- Note pipeline times, any flake causes, and tweaks carried into future weeks.
