@@ -2,73 +2,429 @@
 <html lang="en">
 
 <head>
+    <!-- Essentials -->
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Progressive Enhancement w/ HTMX + Vanilla JS · ProjectCadence</title>
-    <link rel="stylesheet" href="../../assets/css/site.css" />
+    <title>Progressive Enhancement: Baseline First, Layers Second · ProjectCadence</title>
     <meta name="description"
-        content="Ship a no-JS baseline; layer HTMX swaps and classic JS without breaking the page." />
+        content="Build a no-JS baseline that works, then layer HTMX swaps and vanilla JS enrichments that fail safely. Includes live examples and a D3 readiness gauge." />
+    <link rel="canonical" href="../posts/progressive-enhancement.html" />
+
+    <!-- Styles & scripts (project-page safe, relative) -->
+    <link rel="stylesheet" href="../../assets/css/site.css" />
     <script defer src="https://unpkg.com/htmx.org@1.9.12"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/d3@7"></script>
     <script defer src="../../assets/js/site.js"></script>
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="Progressive Enhancement: Baseline First, Layers Second" />
+    <meta property="og:description"
+        content="No-JS baseline, then HTMX and vanilla JS on top—demonstrated with live components and a D3 readiness gauge." />
+    <meta property="og:image" content="../../assets/media/og-image.svg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="theme-color" content="#0a0a0a" />
+
+    <!-- BlogPosting schema -->
+    <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"BlogPosting",
+    "headline":"Progressive Enhancement: Baseline First, Layers Second",
+    "description":"Build a no-JS baseline that works, then layer HTMX swaps and vanilla JS enrichments that fail safely. Includes live examples and a D3 readiness gauge.",
+    "author":{"@type":"Person","name":"Vaibhav Bansal"},
+    "datePublished":"2025-08-29",
+    "dateModified":"2025-08-30",
+    "image":"../../assets/media/og-image.svg",
+    "mainEntityOfPage":{"@type":"WebPage","@id":"../posts/progressive-enhancement.html"}
+  }
+  </script>
+
+    <style>
+        /* Page-local helpers (tiny; Tailwind handles the rest) */
+        .codeblock {
+            overflow-x: auto;
+            border: 1px solid #27272a;
+            background: #0b0b0e;
+            border-radius: .75rem;
+            padding: 1rem;
+        }
+
+        .chip {
+            display: inline-block;
+            border: 1px solid #27272a;
+            border-radius: 999px;
+            padding: .25rem .6rem;
+            font-size: .8rem;
+        }
+
+        :focus-visible {
+            outline: 2px solid #93c5fd;
+            outline-offset: 2px;
+        }
+    </style>
 </head>
 
 <body class="min-h-screen bg-neutral-950 text-neutral-100">
-    <header class="mx-auto max-w-3xl px-4 py-6">
-        <a href="../index.html" class="text-sm text-neutral-400 hover:underline">← Back to Blog</a>
+    <!-- Skip link -->
+    <a href="#content"
+        class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded focus:bg-neutral-800 focus:px-3 focus:py-2">Skip
+        to content</a>
+
+    <!-- Header -->
+    <header class="mx-auto max-w-5xl px-4 py-6">
+        <nav class="flex items-center justify-between" aria-label="Main">
+            <a href="../../index.html" class="text-lg font-semibold">ProjectCadence</a>
+            <ul class="flex gap-6 text-sm">
+                <li><a href="../index.html" class="hover:underline">Blog</a></li>
+                <li><a href="../../demos/d3-bar.html" class="hover:underline">D3 Demo</a></li>
+            </ul>
+        </nav>
     </header>
 
-    <main class="mx-auto max-w-3xl px-4 pb-16">
-        <article class="prose prose-invert max-w-none">
-            <header>
-                <h1>Progressive Enhancement w/ HTMX + Vanilla JS</h1>
-                <p class="text-neutral-400">Baseline HTML first. Enhancement should be optional, not required.</p>
+    <main id="content" class="mx-auto max-w-3xl px-4 pb-24">
+        <article class="space-y-10">
+            <header class="mt-6 space-y-3">
+                <p class="text-xs uppercase tracking-widest text-neutral-400">HTML · HTMX · JavaScript</p>
+                <h1 class="text-3xl font-bold leading-tight">Progressive Enhancement: Baseline First, Layers Second</h1>
+                <p class="text-neutral-400">Ship a page that works without JavaScript. Then, add interactivity that
+                    improves the experience without holding it hostage.</p>
             </header>
 
-            <section>
-                <h2>Baseline content is static HTML</h2>
-                <pre><code>&lt;ul id="articles"&gt;
-  &lt;li&gt;&lt;a href="/blog/posts/semantic-accessibility.html"&gt;Semantic HTML&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;noscript&gt;Filtering requires JavaScript, but the list still works.&lt;/noscript&gt;</code></pre>
-            </section>
+            <!-- Contents -->
+            <nav aria-label="Table of contents" class="rounded-2xl border border-neutral-800 p-4">
+                <h2 class="mb-2 text-sm font-semibold text-neutral-300">Contents</h2>
+                <ol id="toc" class="list-decimal pl-5 text-sm text-neutral-400 space-y-1">
+                    <li><a href="#principles" class="hover:underline">Principles</a></li>
+                    <li><a href="#baseline" class="hover:underline">No-JS baseline list</a></li>
+                    <li><a href="#vanilla-js" class="hover:underline">Vanilla JS enrichment (filter + sort)</a></li>
+                    <li><a href="#htmx" class="hover:underline">HTMX partial swap</a></li>
+                    <li><a href="#forms" class="hover:underline">Forms that work with and without JS</a></li>
+                    <li><a href="#readiness" class="hover:underline">Live enhancement readiness (D3)</a></li>
+                    <li><a href="#checklist" class="hover:underline">Checklist</a></li>
+                </ol>
+            </nav>
 
-            <section>
-                <h2>HTMX for progressive swapping (no framework)</h2>
-                <pre><code>&lt;div id="list"
-     hx-get="/blog/_partials/list.html?tag=css"
-     hx-swap="innerHTML"
-     hx-trigger="click from:#filter-css"&gt;&lt;/div&gt;
-
-&lt;button id="filter-css"&gt;Filter CSS&lt;/button&gt;</code></pre>
-                <p>If HTMX fails, users still have the baseline list.</p>
-            </section>
-
-            <section>
-                <h2>Classic JS enrichment (event listeners)</h2>
-                <pre><code>&lt;button id="theme-toggle"&gt;Toggle theme&lt;/button&gt;
-&lt;script&gt;
-  document.getElementById('theme-toggle')
-    ?.addEventListener('click', () =&gt; {
-      document.documentElement.classList.toggle('dark');
-    });
-&lt;/script&gt;</code></pre>
-                <p>Keep it small, feature-scoped, and safe to ignore.</p>
-            </section>
-
-            <section>
-                <h2>Failure modes you can live with</h2>
-                <ul>
-                    <li>Network down → partials fail: baseline HTML remains usable.</li>
-                    <li>JS blocked → no filters/toggles: links still navigate.</li>
-                    <li>Slow device → minimal script, no main-thread hogs.</li>
+            <section id="principles" class="space-y-4">
+                <h2 class="text-2xl font-semibold">Principles</h2>
+                <ul class="list-disc pl-5 space-y-2">
+                    <li><strong>Core first:</strong> content and basic navigation require no JS.</li>
+                    <li><strong>Layered:</strong> HTMX and scripts enhance, never replace, the baseline.</li>
+                    <li><strong>Resilient:</strong> failures are tolerable—timeouts, blocked JS, slow devices.</li>
+                    <li><strong>Observable:</strong> track what’s enhanced to avoid accidental regressions.</li>
                 </ul>
             </section>
 
-            <footer class="mt-10 text-sm text-neutral-400">
+            <!-- BASELINE -->
+            <section id="baseline" class="space-y-4">
+                <h2 class="text-2xl font-semibold">No-JS baseline list</h2>
+                <p>This list is useful with zero JavaScript: it’s a plain set of links with tags. The chips are just
+                    anchors to the same page hash; with JS, they become live filters.</p>
+
+                <div class="flex flex-wrap gap-2 text-sm" aria-label="Filters (enhanced with JS)">
+                    <a href="#all" class="chip" data-filter="all">All</a>
+                    <a href="#css" class="chip" data-filter="css">CSS</a>
+                    <a href="#js" class="chip" data-filter="js">JS</a>
+                    <a href="#a11y" class="chip" data-filter="a11y">A11y</a>
+                </div>
+
+                <ul id="pe-list" class="mt-4 grid gap-3">
+                    <li data-tags="a11y html">
+                        <a href="../posts/semantic-accessibility.html" class="hover:underline">Semantic HTML for A11y &
+                            SEO</a>
+                        <span class="ml-2 text-xs text-neutral-400">html · a11y</span>
+                    </li>
+                    <li data-tags="css grid d3">
+                        <a href="../posts/responsive-layouts.html" class="hover:underline">Responsive Design: Fluid Type
+                            & Grid</a>
+                        <span class="ml-2 text-xs text-neutral-400">css · grid · d3</span>
+                    </li>
+                    <li data-tags="js htmx">
+                        <a href="../posts/progressive-enhancement.html" class="hover:underline">Progressive Enhancement:
+                            Baseline First, Layers Second</a>
+                        <span class="ml-2 text-xs text-neutral-400">js · htmx</span>
+                    </li>
+                </ul>
+
+                <noscript>
+                    <p class="mt-3 text-neutral-400">JavaScript is disabled. Filters are inert, but the list above is
+                        fully usable.</p>
+                </noscript>
+
+                <div class="codeblock text-sm">
+                    <pre><code>&lt;ul id="pe-list"&gt;
+  &lt;li data-tags="a11y html"&gt;...&lt;/li&gt;
+  &lt;li data-tags="css grid d3"&gt;...&lt;/li&gt;
+  &lt;li data-tags="js htmx"&gt;...&lt;/li&gt;
+&lt;/ul&gt;</code></pre>
+                </div>
+            </section>
+
+            <!-- VANILLA JS -->
+            <section id="vanilla-js" class="space-y-4">
+                <h2 class="text-2xl font-semibold">Vanilla JS enrichment (filter + sort)</h2>
+                <p>With JS available, filter the list by tag and sort it alphabetically. If JS fails, the baseline still
+                    works.</p>
+
+                <div class="flex items-center gap-3 text-sm">
+                    <button id="sort-alpha" type="button" class="chip">Sort A→Z</button>
+                    <button id="sort-reset" type="button" class="chip">Original order</button>
+                </div>
+
+                <div class="codeblock text-sm">
+                    <pre><code>// Filter by clicking chips
+document.querySelectorAll('[data-filter]').forEach(chip =&gt; {
+  chip.addEventListener('click', (e) =&gt; {
+    const tag = (e.currentTarget as HTMLElement).dataset.filter || 'all';
+    const items = Array.from(document.querySelectorAll('#pe-list &gt; li'));
+    items.forEach(li =&gt; {
+      const tags = (li.getAttribute('data-tags') || '').split(/\s+/);
+      li.style.display = (tag === 'all' || tags.includes(tag)) ? '' : 'none';
+    });
+    e.preventDefault(); // keep hash-free when JS is present
+  });
+});
+
+// Sort A→Z (toggleable)
+const list = document.getElementById('pe-list')!;
+const original = Array.from(list.children) as HTMLElement[];
+document.getElementById('sort-alpha')?.addEventListener('click', () =&gt; {
+  const sorted = [...original].sort((a, b) =&gt; {
+    return a.textContent!.localeCompare(b.textContent!);
+  });
+  sorted.forEach(el =&gt; list.appendChild(el));
+});
+document.getElementById('sort-reset')?.addEventListener('click', () =&gt; {
+  original.forEach(el =&gt; list.appendChild(el));
+});</code></pre>
+                </div>
+            </section>
+
+            <!-- HTMX -->
+            <section id="htmx" class="space-y-4">
+                <h2 class="text-2xl font-semibold">HTMX partial swap</h2>
+                <p>HTMX lets you swap static partials with a single attribute. If the request fails or JS is blocked,
+                    your baseline is still visible and usable.</p>
+
+                <div class="rounded-2xl border border-neutral-800 p-4">
+                    <div class="mb-3 text-sm text-neutral-400">Demo: load an explainer partial into the box below.</div>
+                    <div class="flex gap-2">
+                        <button class="chip" hx-get="./_partials/pe-explainer.html" hx-target="#htmx-target"
+                            hx-swap="innerHTML">Load explainer</button>
+
+                        <button class="chip" hx-get="./_partials/pe-explainer-advanced.html" hx-target="#htmx-target"
+                            hx-swap="innerHTML">Load advanced</button>
+                    </div>
+
+                    <div id="htmx-target" class="mt-4 rounded-xl border border-neutral-800 p-4">
+                        <p class="text-neutral-400 text-sm">Baseline content. If HTMX is unavailable, this never
+                            changes—and that’s okay.</p>
+                    </div>
+
+                    <noscript>
+                        <p class="mt-3 text-neutral-400">JavaScript is disabled, so the buttons above act as inert UI.
+                            Baseline content remains.</p>
+                    </noscript>
+                </div>
+
+                <div class="codeblock text-sm">
+                    <pre><code>&lt;button hx-get="./_partials/pe-explainer.html"
+        hx-target="#htmx-target" hx-swap="innerHTML"&gt;Load explainer&lt;/button&gt;</code></pre>
+                </div>
+
+                <p class="text-neutral-400 text-sm">The partials are static files you can version. No server code
+                    required on GitHub Pages.</p>
+            </section>
+
+            <!-- FORMS -->
+            <section id="forms" class="space-y-4">
+                <h2 class="text-2xl font-semibold">Forms that work with and without JS</h2>
+                <p>Start with a real <code>action</code> (even if it’s a mailto: or a demo echo URL while prototyping).
+                    Enhance client-side validation for speed; keep server-side (or static fallback) semantics intact.
+                </p>
+
+                <form id="demo-form" action="?" method="get" class="rounded-2xl border border-neutral-800 p-4">
+                    <label for="email" class="block text-sm font-medium">Email</label>
+                    <input id="email" name="email" type="email" required
+                        class="mt-1 w-full rounded-lg border border-neutral-800 bg-neutral-900 px-3 py-2"
+                        aria-describedby="email-hint" />
+                    <p id="email-hint" class="mt-1 text-xs text-neutral-400">We’ll send a confirmation link. No spam.
+                    </p>
+
+                    <button type="submit" class="mt-3 chip">Submit</button>
+                    <p id="form-msg" class="mt-3 text-sm text-neutral-400" role="status" aria-live="polite"></p>
+                </form>
+
+                <div class="codeblock text-sm">
+                    <pre><code>// Client-side enhancement: prevent empty submissions, show inline message
+document.getElementById('demo-form')?.addEventListener('submit', (e) =&gt; {
+  const email = (document.getElementById('email') as HTMLInputElement).value.trim();
+  if (!email) {
+    e.preventDefault();
+    const msg = document.getElementById('form-msg')!;
+    msg.textContent = 'Please enter a valid email before submitting.';
+  }
+});</code></pre>
+                </div>
+
+                <p class="text-neutral-400 text-sm">If JS fails, native validation still runs (required/email). On a
+                    real backend, keep server validation as the source of truth.</p>
+            </section>
+
+            <!-- D3 READINESS -->
+            <section id="readiness" class="space-y-4">
+                <h2 class="text-2xl font-semibold">Live enhancement readiness (D3)</h2>
+                <p class="text-neutral-400">This gauge shows what layers are active on this page right now. Click one of
+                    the HTMX buttons above, then come back—the gauge will update.</p>
+
+                <div id="pe-gauge" class="rounded-2xl border border-neutral-800 p-4"></div>
+                <ul id="pe-status" class="text-sm text-neutral-300 space-y-1"></ul>
+
+                <script>
+                    (function () {
+                        // Track layers
+                        const status = {
+                            baseline: true,
+                            js: !!window.document,     // DOM parsed
+                            htmx: !!window.htmx,       // HTMX present?
+                            htmxSwapped: false         // becomes true after any HX request completes
+                        };
+
+                        // Listen for HTMX swaps to mark success
+                        document.addEventListener('htmx:afterSwap', function (evt) {
+                            if (evt && evt.target && evt.target.id === 'htmx-target') {
+                                status.htmxSwapped = true;
+                                render();
+                            }
+                        });
+
+                        // Render list + D3 gauge
+                        function render() {
+                            const list = document.getElementById('pe-status');
+                            if (list) {
+                                list.innerHTML = '';
+                                Object.entries(status).forEach(([k, v]) => {
+                                    const li = document.createElement('li');
+                                    li.textContent = (v ? '✓ ' : '• ') + k;
+                                    list.appendChild(li);
+                                });
+                            }
+
+                            if (!window.d3) return; // no-JS fallback still shows the list
+                            const d3 = window.d3, el = document.getElementById('pe-gauge');
+                            if (!el) return;
+                            el.innerHTML = '';
+
+                            const items = [
+                                { k: 'Baseline', v: status.baseline ? 1 : 0 },
+                                { k: 'JS runtime', v: status.js ? 1 : 0 },
+                                { k: 'HTMX loaded', v: status.htmx ? 1 : 0 },
+                                { k: 'HTMX swap', v: status.htmxSwapped ? 1 : 0 }
+                            ];
+                            const score = Math.round(100 * (items.reduce((s, d) => s + d.v, 0) / items.length));
+
+                            const width = Math.min(el.clientWidth || 720, 720);
+                            const height = 140, margin = { top: 16, right: 24, bottom: 30, left: 40 };
+                            const x = d3.scaleLinear().domain([0, 100]).range([margin.left, width - margin.right]);
+
+                            const svg = d3.select(el).append('svg').attr('width', width).attr('height', height);
+
+                            // Background
+                            svg.append('rect').attr('x', x(0)).attr('y', 50).attr('width', x(100) - x(0)).attr('height', 24).attr('rx', 12).attr('fill', '#1f2937');
+                            // Foreground
+                            svg.append('rect').attr('x', x(0)).attr('y', 50).attr('width', x(score) - x(0)).attr('height', 24).attr('rx', 12).attr('fill', '#e5e7eb');
+
+                            // Axis
+                            const axis = d3.axisBottom(x).ticks(10);
+                            svg.append('g').attr('transform', 'translate(0,100)')
+                                .call(axis).call(g => g.selectAll('text').attr('fill', '#9ca3af'))
+                                .call(g => g.selectAll('line,path').attr('stroke', '#374151'));
+
+                            // Label
+                            svg.append('text').attr('x', x(score) + 8).attr('y', 45).attr('fill', '#9ca3af').style('font-size', '12px').text(score + '% enhanced');
+                        }
+
+                        // Vanilla JS filters/sort (from earlier section)
+                        (function enhanceList() {
+                            document.querySelectorAll('[data-filter]').forEach(chip => {
+                                chip.addEventListener('click', (e) => {
+                                    const tag = chip.getAttribute('data-filter') || 'all';
+                                    const items = Array.from(document.querySelectorAll('#pe-list > li'));
+                                    items.forEach(li => {
+                                        const tags = (li.getAttribute('data-tags') || '').split(/\s+/);
+                                        li.style.display = (tag === 'all' || tags.includes(tag)) ? '' : 'none';
+                                    });
+                                    e.preventDefault();
+                                });
+                            });
+                            const list = document.getElementById('pe-list');
+                            if (list) {
+                                const original = Array.from(list.children);
+                                document.getElementById('sort-alpha')?.addEventListener('click', () => {
+                                    [...list.children]
+                                        .sort((a, b) => a.textContent.localeCompare(b.textContent))
+                                        .forEach(el => list.appendChild(el));
+                                });
+                                document.getElementById('sort-reset')?.addEventListener('click', () => {
+                                    original.forEach(el => list.appendChild(el));
+                                });
+                            }
+                        })();
+
+                        // First render
+                        render();
+
+                        // Rerender after resize (keeps gauge tidy)
+                        let raf;
+                        window.addEventListener('resize', () => {
+                            if (raf) cancelAnimationFrame(raf);
+                            raf = requestAnimationFrame(render);
+                        }, { passive: true });
+                    })();
+                </script>
+            </section>
+
+            <section id="checklist" class="space-y-3">
+                <h2 class="text-2xl font-semibold">Checklist</h2>
+                <ul class="list-disc pl-5 space-y-2">
+                    <li>Ship meaningful HTML first: headings, landmarks, lists/links.</li>
+                    <li>Use <code>noscript</code> messages sparingly to explain degraded behavior.</li>
+                    <li>Keep HTMX/JS enhancements feature-scoped; don’t block navigation.</li>
+                    <li>Handle failure modes: network timeouts, partial loads, slow devices.</li>
+                    <li>Measure what’s enhanced (e.g., via a small telemetry or this page-local gauge).</li>
+                </ul>
+            </section>
+
+            <footer class="pt-6 text-sm text-neutral-400">
                 <p>Tags: htmx · javascript · frontend-arch</p>
+                <p class="mt-1">© 2025 Vaibhav Bansal</p>
             </footer>
         </article>
     </main>
+
+    <footer class="mx-auto max-w-5xl px-4 pb-10 text-sm text-neutral-500">
+        <a href="../index.html" class="hover:underline">← Back to Blog</a>
+    </footer>
+
+    <!-- Rebuild ToC from actual sections (keeps static baseline) -->
+    <script>
+        (function () {
+            const toc = document.getElementById("toc");
+            const sections = document.querySelectorAll("article section[id]");
+            if (!toc || !sections.length) return;
+            toc.innerHTML = "";
+            sections.forEach(sec => {
+                const h = sec.querySelector("h2");
+                if (!h) return;
+                const li = document.createElement("li");
+                const a = document.createElement("a");
+                a.href = "#" + sec.id;
+                a.textContent = h.textContent || sec.id;
+                a.className = "hover:underline";
+                li.appendChild(a);
+                toc.appendChild(li);
+            });
+        })();
+    </script>
 </body>
 
 </html>
