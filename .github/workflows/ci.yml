@@ -1,0 +1,100 @@
+name: CI
+
+on:
+  push:
+    branches: [main, develop, "feature/**", "release/**", "hotfix/**"]
+  pull_request:
+    branches: [main, develop]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  precommit:
+    name: Pre-commit (lint/format)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - name: Install pre-commit
+        run: |
+          python -m pip install --upgrade pip
+          pip install pre-commit
+      - name: Run pre-commit on all files
+        run: pre-commit run --all-files
+
+  week1-tests:
+    name: Build & test Week 1 (CMake + CTest)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Locate Week 1 directory
+        id: w1
+        shell: bash
+        run: |
+          W1=$(ls -d weeks/W01_* 2>/dev/null | head -n1 || true)
+          echo "dir=$W1" >> "$GITHUB_OUTPUT"
+          if [ -z "$W1" ]; then echo "No Week 1 dir found; will skip."; fi
+
+      - name: Toolchain
+        if: ${{ steps.w1.outputs.dir != '' }}
+        run: sudo apt-get update && sudo apt-get install -y cmake ninja-build g++
+
+      - name: Configure (W01)
+        if: ${{ steps.w1.outputs.dir != '' }}
+        run: cmake -S "${{ steps.w1.outputs.dir }}" -B build-w01 -G Ninja -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build (W01)
+        if: ${{ steps.w1.outputs.dir != '' }}
+        run: cmake --build build-w01 --parallel
+
+      - name: Test (W01)
+        if: ${{ steps.w1.outputs.dir != '' }}
+        run: ctest --test-dir build-w01 --output-on-failure
+
+      - name: Skip Week 1 (no directory)
+        if: ${{ steps.w1.outputs.dir == '' }}
+        run: |
+          echo "Skipping Week 1: directory not present."
+
+  week2-build:
+    name: Build Week 2 (bench compiles)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Locate Week 2 directory
+        id: w2
+        shell: bash
+        run: |
+          W2=$(ls -d weeks/W02_* 2>/dev/null | head -n1 || true)
+          echo "dir=$W2" >> "$GITHUB_OUTPUT"
+          if [ -z "$W2" ]; then echo "No Week 2 dir found; will skip."; fi
+
+      - name: Toolchain
+        if: ${{ steps.w2.outputs.dir != '' }}
+        run: sudo apt-get update && sudo apt-get install -y cmake ninja-build g++
+
+      - name: Configure (W02)
+        if: ${{ steps.w2.outputs.dir != '' }}
+        run: cmake -S "${{ steps.w2.outputs.dir }}" -B build-w02 -G Ninja -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build (W02)
+        if: ${{ steps.w2.outputs.dir != '' }}
+        run: cmake --build build-w02 --parallel
+
+      - name: Optional smoke run
+        if: ${{ steps.w2.outputs.dir != '' }}
+        run: |
+          if [ -x build-w02/bench ]; then set -e; out=bench.out; timeout 60s ./build-w02/bench > "$out" 2>&1 || true; tail -n 80 "$out" || true; else echo "No bench binary; skip run."; fi
+
+      - name: Skip Week 2 (no directory)
+        if: ${{ steps.w2.outputs.dir == '' }}
+        run: |
+          echo "Skipping Week 2: directory not present."
