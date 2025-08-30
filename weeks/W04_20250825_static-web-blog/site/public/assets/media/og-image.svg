@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630">
+  <rect width="1200" height="630" fill="#0a0a0a"/>
+  <text x="60" y="340" font-family="ui-sans-serif,system-ui" font-size="64" fill="#e5e5e5">
+    ProjectCadence — Week 4
+  </text>
+  <text x="60" y="410" font-family="ui-sans-serif,system-ui" font-size="36" fill="#93c5fd">
+    Static blog · HTMX · Tailwind · TS · D3
+  </text>
+</svg>

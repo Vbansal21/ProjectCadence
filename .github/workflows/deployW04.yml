@@ -1,0 +1,28 @@
+# .github/workflows/deployW04.yml
+name: Deploy Week4 Site
+on:
+  push:
+    branches: [main]
+    paths:
+      - "weeks/W04_20250825_static-web-blog/site/**"
+
+jobs:
+  build-deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write   # <-- required for gh-pages push
+    defaults:
+      run:
+        working-directory: weeks/W04_20250825_static-web-blog/site
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: "20" }
+      - run: npm ci
+      - run: npm run build
+      - name: Publish to gh-pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: weeks/W04_20250825_static-web-blog/site/public
+          force_orphan: true

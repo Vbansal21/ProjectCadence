@@ -24,3 +24,8 @@ Thumbs.db
 .idea/
 *.pt
 **/*.pt
+# .gitignore
+**/node_modules/
+**/env/
+**/venv/
+**/.venv/

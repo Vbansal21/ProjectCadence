@@ -1,0 +1,19 @@
+{
+  "name": "pc-week4-site",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "css": "tailwindcss -i ./src/css/site.css -o ./public/assets/css/site.css --minify",
+    "ts": "esbuild src/ts/site.ts --bundle --outfile=public/assets/js/site.js && esbuild src/ts/charts/demo.ts --bundle --outfile=public/assets/js/charts/demo.js",
+    "build": "npm run css && npm run ts"
+  },
+  "devDependencies": {
+    "@types/d3": "^7.4.3",
+    "autoprefixer": "^10.4.20",
+    "d3": "^7.9.0",
+    "esbuild": "^0.23.0",
+    "postcss": "^8.4.45",
+    "tailwindcss": "^3.4.10",
+    "typescript": "^5.5.4"
+  }
+}

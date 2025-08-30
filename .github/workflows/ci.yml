@@ -73,32 +73,26 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y cmake ninja-build g++ clang ccache
           if [ "${{ matrix.compiler }}" = "gcc" ]; then
-            echo "Using GCC toolchain"
-            echo 'export CC="ccache gcc"' >> $GITHUB_ENV
-            echo 'export CXX="ccache g++"' >> $GITHUB_ENV
+            echo 'CC=ccache gcc'   >> $GITHUB_ENV
+            echo 'CXX=ccache g++'  >> $GITHUB_ENV
           else
-            echo "Using Clang toolchain"
-            echo 'export CC="ccache clang"' >> $GITHUB_ENV
-            echo 'export CXX="ccache clang++"' >> $GITHUB_ENV
+            echo 'CC=ccache clang'   >> $GITHUB_ENV
+            echo 'CXX=ccache clang++'>> $GITHUB_ENV
           fi
-          # Fallback to gcc if clang is not available
-          if ! command -v clang >/dev/null 2>&1; then
-            echo "Clang not found; falling back to GCC"
-            echo 'export CC="ccache gcc"' >> $GITHUB_ENV
-            echo 'export CXX="ccache g++"' >> $GITHUB_ENV
-          fi
+          # make ccache a bit more effective
+          ccache --set-config=max_size=256M || true
 
-      - name: Cache ccache
+      - name: Cache ccache (W01)
         if: ${{ steps.w1.outputs.dir != '' }}
         uses: actions/cache@v4
         with:
           path: ~/.cache/ccache
-          key: ccache-${{ runner.os }}-${{ matrix.compiler }}-${{ matrix.config }}-${{ hashFiles('weeks/W01_20250804_reverse-stdlib/**', '.github/workflows/ci.yml') }}
+          key: ccache-w01-${{ runner.os }}-${{ matrix.compiler }}-${{ matrix.config }}-${{ hashFiles('weeks/W01_20250804_reverse-stdlib/**', '.github/workflows/ci.yml') }}
           restore-keys: |
-            ccache-${{ runner.os }}-${{ matrix.compiler }}-
-            ccache-${{ runner.os }}-
+            ccache-w01-${{ runner.os }}-${{ matrix.compiler }}-
+            ccache-w01-${{ runner.os }}-
 
-      - name: Cache CMake build directory
+      - name: Cache CMake build dir (W01)
         if: ${{ steps.w1.outputs.dir != '' }}
         uses: actions/cache@v4
         with:
@@ -107,7 +101,6 @@ jobs:
           restore-keys: |
             cmake-w01-${{ runner.os }}-${{ matrix.compiler }}-
             cmake-w01-${{ runner.os }}-
-
 
       - name: Configure (W01)
         if: ${{ steps.w1.outputs.dir != '' }}
@@ -170,9 +163,32 @@ jobs:
           echo "dir=$W2" >> "$GITHUB_OUTPUT"
           if [ -z "$W2" ]; then echo "No Week 2 dir found; will skip."; fi
 
-      - name: Toolchain
+      - name: Toolchain + ccache
         if: ${{ steps.w2.outputs.dir != '' }}
-        run: sudo apt-get update && sudo apt-get install -y cmake ninja-build g++
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cmake ninja-build g++ ccache
+          echo 'CC=ccache gcc'  >> $GITHUB_ENV
+          echo 'CXX=ccache g++' >> $GITHUB_ENV
+          ccache --set-config=max_size=256M || true
+
+      - name: Cache ccache (W02)
+        if: ${{ steps.w2.outputs.dir != '' }}
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ccache
+          key: ccache-w02-${{ runner.os }}-${{ hashFiles('weeks/W02_20250811_dsa-benchmarks/**', '.github/workflows/ci.yml') }}
+          restore-keys: |
+            ccache-w02-${{ runner.os }}-
+
+      - name: Cache CMake build dir (W02)
+        if: ${{ steps.w2.outputs.dir != '' }}
+        uses: actions/cache@v4
+        with:
+          path: build-w02
+          key: cmake-w02-${{ runner.os }}-${{ hashFiles('weeks/W02_20250811_dsa-benchmarks/**', '.github/workflows/ci.yml') }}
+          restore-keys: |
+            cmake-w02-${{ runner.os }}-
 
       - name: Configure (W02)
         if: ${{ steps.w2.outputs.dir != '' }}
@@ -182,10 +198,24 @@ jobs:
         if: ${{ steps.w2.outputs.dir != '' }}
         run: cmake --build build-w02 --parallel
 
-      - name: Optional smoke run
+      - name: Optional smoke run (60s cap)
         if: ${{ steps.w2.outputs.dir != '' }}
         run: |
-          if [ -x build-w02/bench ]; then set -e; out=bench.out; timeout 60s ./build-w02/bench > "$out" 2>&1 || true; tail -n 80 "$out" || true; else echo "No bench binary; skip run."; fi
+          if [ -x build-w02/bench ]; then
+            out=bench.out
+            timeout 60s ./build-w02/bench > "$out" 2>&1 || true
+            tail -n 80 "$out" || true
+          else
+            echo "No bench binary; skip run."
+          fi
+
+      - name: Upload bench log (optional)
+        if: ${{ steps.w2.outputs.dir != '' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: w02-bench-log
+          path: bench.out
+          if-no-files-found: ignore
 
       - name: Skip Week 2 (no directory)
         if: ${{ steps.w2.outputs.dir == '' }}
