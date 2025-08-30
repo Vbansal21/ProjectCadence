@@ -35,22 +35,24 @@ jobs:
       actions: read
       contents: read
       security-events: write
-    strategy:
-      fail-fast: false
-      matrix:
-        language: [cpp]
     steps:
       - uses: actions/checkout@v4
       - uses: github/codeql-action/init@v3
         with:
           languages: cpp
-      - uses: github/codeql-action/autobuild@v3
+      - name: Build C/C++ for CodeQL (Week 1)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cmake ninja-build g++
+          cmake -S weeks/W01_20250804_reverse-stdlib -B build-w01 -G Ninja -DCMAKE_BUILD_TYPE=Release
+          cmake --build build-w01 --parallel
       - uses: github/codeql-action/analyze@v3
 
   week1-tests:
     name: Build & test Week 1 (CMake + CTest) ${{ matrix.compiler }} ${{ matrix.config }}
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         compiler: [gcc, clang]
         config: [Release, ASan]
@@ -87,20 +89,25 @@ jobs:
           fi
 
       - name: Cache ccache
+        if: ${{ steps.w1.outputs.dir != '' }}
         uses: actions/cache@v4
         with:
-            path: ~/.cache/ccache
-            key: ccache-${{ runner.os }}-${{ hashFiles('**/weeks/W01_*/**', '.github/workflows/ci.yml')}}
-            restore-keys: |
-              ccache-${{ runner.os}}-
+          path: ~/.cache/ccache
+          key: ccache-${{ runner.os }}-${{ matrix.compiler }}-${{ matrix.config }}-${{ hashFiles('weeks/W01_20250804_reverse-stdlib/**', '.github/workflows/ci.yml') }}
+          restore-keys: |
+            ccache-${{ runner.os }}-${{ matrix.compiler }}-
+            ccache-${{ runner.os }}-
 
       - name: Cache CMake build directory
+        if: ${{ steps.w1.outputs.dir != '' }}
         uses: actions/cache@v4
         with:
-            path: build-w01
-            key: cmake-${{ runner.os }}-${{ hashFiles('**/weeks/W01_*/**', '.github/workflows/ci.yml')}}
-            restore-keys: |
-              cmake-${{ runner.os}}-
+          path: build-w01
+          key: cmake-w01-${{ runner.os }}-${{ matrix.compiler }}-${{ matrix.config }}-${{ hashFiles('weeks/W01_20250804_reverse-stdlib/**', '.github/workflows/ci.yml') }}
+          restore-keys: |
+            cmake-w01-${{ runner.os }}-${{ matrix.compiler }}-
+            cmake-w01-${{ runner.os }}-
+
 
       - name: Configure (W01)
         if: ${{ steps.w1.outputs.dir != '' }}
@@ -120,31 +127,29 @@ jobs:
         run: ctest --test-dir build-w01 --output-on-failure
 
       - name: CTest with XML
+        if: ${{ steps.w1.outputs.dir != '' }}
         run: |
-          if [ -d build-w01 ]; then
-            ctest --test-dir build-w01 --output-on-failure -T Test --no-compress-output
-            mkdir -p test-results
-            if [ -f build-w01/Testing/Temporary/LastTest.log ]; then
-              cp build-w01/Testing/Temporary/LastTest.log test-results/last-test.log
-            fi
-            if [ -f build-w01/Testing/Temporary/LastTestsFailed.log ]; then
-              cp build-w01/Testing/Temporary/LastTestsFailed.log test-results/last-tests-failed.log
-            fi
-            if [ -f build-w01/Testing/Temporary/LastTestsPassed.log ]; then
-              cp build-w01/Testing/Temporary/LastTestsPassed.log test-results/last-tests-passed.log
-            fi
-            if [ -f build-w01/Testing/TAP/*.xml ]; then
-              cp build-w01/Testing/TAP/*.xml test-results/
-            fi
-          else
-            echo "No build-w01 directory; skipping CTest XML export."
+          ctest --test-dir build-w01 --output-on-failure -T Test --no-compress-output || true
+          mkdir -p test-results
+          if [ -f build-w01/Testing/Temporary/LastTest.log ]; then
+            cp build-w01/Testing/Temporary/LastTest.log test-results/last-test.log
+          fi
+          if [ -f build-w01/Testing/Temporary/LastTestsFailed.log ]; then
+            cp build-w01/Testing/Temporary/LastTestsFailed.log test-results/last-tests-failed.log
+          fi
+          if [ -f build-w01/Testing/Temporary/LastTestsPassed.log ]; then
+            cp build-w01/Testing/Temporary/LastTestsPassed.log test-results/last-tests-passed.log
           fi
 
       - name: Upload CTest reports
+        if: ${{ steps.w1.outputs.dir != '' }}
         uses: actions/upload-artifact@v4
         with:
-          name: w01-ctest-reports
-          path: build-w01/Testing/**/*
+          name: w01-ctest-${{ matrix.compiler }}-${{ matrix.config }}
+          path: |
+            build-w01/Testing/**/*
+            test-results/*
+          if-no-files-found: warn
 
       - name: Skip Week 1 (no directory)
         if: ${{ steps.w1.outputs.dir == '' }}
