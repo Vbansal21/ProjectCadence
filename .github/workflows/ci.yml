@@ -92,7 +92,7 @@ jobs:
       - name: Optional smoke run
         if: ${{ steps.w2.outputs.dir != '' }}
         run: |
-          if [ -x build-w02/bench ]; then ./build-w02/bench || true; else echo "No bench binary; skip run."; fi
+          if [ -x build-w02/bench ]; then set -e; out=bench.out; timeout 60s ./build-w02/bench > "$out" 2>&1 || true; tail -n 80 "$out" || true; else echo "No bench binary; skip run."; fi
 
       - name: Skip Week 2 (no directory)
         if: ${{ steps.w2.outputs.dir == '' }}
