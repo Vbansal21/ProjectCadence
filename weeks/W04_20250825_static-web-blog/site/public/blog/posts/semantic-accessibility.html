@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Semantic HTML for A11y & SEO · ProjectCadence</title>
+    <link rel="stylesheet" href="../../assets/css/site.css" />
+    <link rel="canonical" href="../posts/semantic-accessibility.html" />
+    <meta name="description"
+        content="Landmarks, ARIA minimalism, headings, canonical hygiene, and structured data that make sites usable and findable." />
+    <meta property="og:title" content="Semantic HTML for A11y & SEO" />
+    <meta property="og:image" content="../../assets/media/og-image.svg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <script defer src="https://unpkg.com/htmx.org@1.9.12"></script>
+    <script defer src="../../assets/js/site.js"></script>
+</head>
+
+<body class="min-h-screen bg-neutral-950 text-neutral-100">
+    <header class="mx-auto max-w-3xl px-4 py-6">
+        <a href="../index.html" class="text-sm text-neutral-400 hover:underline">← Back to Blog</a>
+    </header>
+
+    <main class="mx-auto max-w-3xl px-4 pb-16">
+        <article class="prose prose-invert max-w-none">
+            <header>
+                <h1>Semantic HTML for A11y & SEO</h1>
+                <p class="text-neutral-400">The fastest “performance optimization” is a DOM that tools understand
+                    without JS.</p>
+            </header>
+
+            <section>
+                <h2>Landmarks first, ARIA last</h2>
+                <p>Prefer native elements before ARIA roles. If you must add roles, never contradict native semantics.
+                </p>
+                <pre><code>&lt;header&gt;...&lt;/header&gt;
+&lt;nav aria-label="Main"&gt;...&lt;/nav&gt;
+&lt;main id="content"&gt;...&lt;/main&gt;
+&lt;aside&gt;...&lt;/aside&gt;
+&lt;footer&gt;...&lt;/footer&gt;</code></pre>
+            </section>
+
+            <section>
+                <h2>Headings form an outline</h2>
+                <p>One <code>h1</code> per page sectioning context is fine, but don’t skip levels arbitrarily.</p>
+                <pre><code>&lt;h1&gt;Title&lt;/h1&gt;
+&lt;h2&gt;Section&lt;/h2&gt;
+&lt;h3&gt;Subsection&lt;/h3&gt;</code></pre>
+            </section>
+
+            <section>
+                <h2>Keyboard and skip link</h2>
+                <pre><code>&lt;a href="#content" class="sr-only focus:not-sr-only"&gt;Skip to content&lt;/a&gt;</code></pre>
+                <p>Ensure visible focus rings and sequential tab order.</p>
+            </section>
+
+            <section>
+                <h2>Canonical, description, and structured data</h2>
+                <pre><code>&lt;link rel="canonical" href="https://example.com/blog/semantic-accessibility/" /&gt;
+&lt;meta name="description" content="..." /&gt;
+&lt;script type="application/ld+json"&gt;{
+  "@context":"https://schema.org",
+  "@type":"BlogPosting",
+  "headline":"Semantic HTML for A11y & SEO",
+  "datePublished":"2025-08-25",
+  "author":{"@type":"Person","name":"Vaibhav Bansal"}
+}&lt;/script&gt;</code></pre>
+            </section>
+
+            <section>
+                <h2>Alt text and media</h2>
+                <p>Describe purpose, not pixels. Decorative images should be <code>alt=""</code> and
+                    <code>role="presentation"</code>.</p>
+            </section>
+
+            <section>
+                <h2>Checklist (quick, practical)</h2>
+                <ul>
+                    <li><code>lang</code> attribute on <code>&lt;html&gt;</code></li>
+                    <li>Landmarks present (<code>header</code>, <code>nav</code>, <code>main</code>,
+                        <code>footer</code>)</li>
+                    <li>Skip link works</li>
+                    <li>Consistent heading outline</li>
+                    <li>Descriptive <code>title</code> and <code>meta description</code></li>
+                    <li>Alt text on informative images</li>
+                    <li>Valid canonical URL</li>
+                </ul>
+            </section>
+
+            <footer class="mt-10 text-sm text-neutral-400">
+                <p>Tags: accessibility · seo · html</p>
+            </footer>
+        </article>
+    </main>
+</body>
+
+</html>

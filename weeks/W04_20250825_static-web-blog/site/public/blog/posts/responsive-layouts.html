@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Responsive Design: Fluid Type & Grid · ProjectCadence</title>
+    <link rel="stylesheet" href="../../assets/css/site.css" />
+    <meta name="description"
+        content="Fluid typography with clamp(), modern grid patterns, and breakpoint choices that follow content." />
+    <script defer src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+    <script defer src="../../assets/js/charts/demo.js"></script>
+</head>
+
+<body class="min-h-screen bg-neutral-950 text-neutral-100">
+    <header class="mx-auto max-w-3xl px-4 py-6">
+        <a href="../index.html" class="text-sm text-neutral-400 hover:underline">← Back to Blog</a>
+    </header>
+
+    <main class="mx-auto max-w-3xl px-4 pb-16">
+        <article class="prose prose-invert max-w-none">
+            <header>
+                <h1>Responsive Design: Fluid Type & Grid</h1>
+                <p class="text-neutral-400">Design to your content, not to a device zoo. Start fluid, then add
+                    guardrails.</p>
+            </header>
+
+            <section>
+                <h2>Fluid typography with <code>clamp()</code></h2>
+                <pre><code>/* Tailwind-like custom property approach */
+:root { --step-0: clamp(1rem, 0.9rem + 0.5vw, 1.125rem); }
+h1 { font-size: clamp(1.75rem, 1.25rem + 2vw, 2.5rem); }</code></pre>
+                <p>Use fluid steps for body text and headings to avoid abrupt jumps.</p>
+            </section>
+
+            <section>
+                <h2>Layout with modern CSS Grid</h2>
+                <pre><code>.wrap {
+  display: grid;
+  grid-template-columns: 1fr min(70ch, 100%) 1fr;
+}
+.wrap > * { grid-column: 2; }</code></pre>
+                <p>Center content with a readable measure (~60–75 characters) and let side columns absorb whitespace.
+                </p>
+            </section>
+
+            <section>
+                <h2>Breakpoints serve content, not devices</h2>
+                <pre><code>@media (min-width: 48rem) { /* wide-ish text columns */ }
+@media (min-width: 64rem) { /* two-column article & aside */ }</code></pre>
+                <p>Pick breakpoints where the layout actually strains, not at arbitrary device widths.</p>
+            </section>
+
+            <section>
+                <h2>Micro-figure: a tiny bar chart</h2>
+                <p>This stub D3 figure demonstrates lazy, scoped interactivity—no global bundle bloat.</p>
+                <div id="chart" class="rounded-2xl border border-neutral-800 p-6"></div>
+            </section>
+
+            <footer class="mt-10 text-sm text-neutral-400">
+                <p>Tags: css · grid · responsive · d3</p>
+            </footer>
+        </article>
+    </main>
+</body>
+
+</html>

@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Progressive Enhancement w/ HTMX + Vanilla JS · ProjectCadence</title>
+    <link rel="stylesheet" href="../../assets/css/site.css" />
+    <meta name="description"
+        content="Ship a no-JS baseline; layer HTMX swaps and classic JS without breaking the page." />
+    <script defer src="https://unpkg.com/htmx.org@1.9.12"></script>
+    <script defer src="../../assets/js/site.js"></script>
+</head>
+
+<body class="min-h-screen bg-neutral-950 text-neutral-100">
+    <header class="mx-auto max-w-3xl px-4 py-6">
+        <a href="../index.html" class="text-sm text-neutral-400 hover:underline">← Back to Blog</a>
+    </header>
+
+    <main class="mx-auto max-w-3xl px-4 pb-16">
+        <article class="prose prose-invert max-w-none">
+            <header>
+                <h1>Progressive Enhancement w/ HTMX + Vanilla JS</h1>
+                <p class="text-neutral-400">Baseline HTML first. Enhancement should be optional, not required.</p>
+            </header>
+
+            <section>
+                <h2>Baseline content is static HTML</h2>
+                <pre><code>&lt;ul id="articles"&gt;
+  &lt;li&gt;&lt;a href="/blog/posts/semantic-accessibility.html"&gt;Semantic HTML&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;noscript&gt;Filtering requires JavaScript, but the list still works.&lt;/noscript&gt;</code></pre>
+            </section>
+
+            <section>
+                <h2>HTMX for progressive swapping (no framework)</h2>
+                <pre><code>&lt;div id="list"
+     hx-get="/blog/_partials/list.html?tag=css"
+     hx-swap="innerHTML"
+     hx-trigger="click from:#filter-css"&gt;&lt;/div&gt;
+
+&lt;button id="filter-css"&gt;Filter CSS&lt;/button&gt;</code></pre>
+                <p>If HTMX fails, users still have the baseline list.</p>
+            </section>
+
+            <section>
+                <h2>Classic JS enrichment (event listeners)</h2>
+                <pre><code>&lt;button id="theme-toggle"&gt;Toggle theme&lt;/button&gt;
+&lt;script&gt;
+  document.getElementById('theme-toggle')
+    ?.addEventListener('click', () =&gt; {
+      document.documentElement.classList.toggle('dark');
+    });
+&lt;/script&gt;</code></pre>
+                <p>Keep it small, feature-scoped, and safe to ignore.</p>
+            </section>
+
+            <section>
+                <h2>Failure modes you can live with</h2>
+                <ul>
+                    <li>Network down → partials fail: baseline HTML remains usable.</li>
+                    <li>JS blocked → no filters/toggles: links still navigate.</li>
+                    <li>Slow device → minimal script, no main-thread hogs.</li>
+                </ul>
+            </section>
+
+            <footer class="mt-10 text-sm text-neutral-400">
+                <p>Tags: htmx · javascript · frontend-arch</p>
+            </footer>
+        </article>
+    </main>
+</body>
+
+</html>
