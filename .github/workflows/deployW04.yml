@@ -26,5 +26,5 @@ jobs:
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ${{ github.workspace }}/weeks/W04_20250825_static-web-blog/site/public
+          publish_dir: weeks/W04_20250825_static-web-blog/site/public
           force_orphan: true
