@@ -1,31 +1,171 @@
 # Week 3 — Git-Flow + CI Foundations (Dev Notes)
 
-**Window:** 2025-08-18 → 2025-08-24 (executing on 2025-08-30)
-**Intent:** Use real Week 1 tests + Week 2 build to stand up CI that auto-lints, builds, and runs tests.
+**Window:** 2025-08-18 → 2025-08-24
+**Goal:** Stand up reliable CI gates over real code (Week-1 tests and Week-2 build), with security scanning and sensible performance trade-offs.
+**Scope of this file:** Why we did each thing, how it works, pitfalls observed, and what to change next time in minutes (not hours).
 
-## Chosen shape
+---
 
-- Branches: `main` (release), `develop` (integration), short-lived `feature/*`.
-- CI: GitHub Actions with jobs for pre-commit, Week 1 tests, Week 2 build.
-- Guardrails: conditional steps so "missing week dir" doesn't fail CI.
+## Repo reality this week
 
-## Today's log
+- **Branch model:** `main` (release), `develop` (integration), short-lived `feature/*`, `hotfix/*`.
+- **Week folders (fixed):**
+  - `weeks/W01_20250804_reverse-stdlib`  → CMake + Catch2 tests.
+  - `weeks/W02_20250811_dsa-benchmarks` → CMake "bench" target (long-running/verbose).
+- **CI runner:** GitHub Actions (Ubuntu).
+- **Python on runner:** pinned to **3.12** for the `pre-commit` job; C++ jobs are compiler-driven and unaffected.
 
-- Confirmed `develop` branch exists and is tracking origin.
-- Added CI workflow (pre-commit + W01 tests + W02 build).
-- First PR to `main` will serve as the Week 3 proof.
+---
 
-## Pitfalls I'm watching
+## What we wired (ci.yml, top-level view)
 
-- CI toolchain vs. local flags (e.g., `-march=native` causing illegal instruction on runners).
-- `CTest` not discovering tests if `enable_testing()` / `add_test()` misconfigured.
-- Flaky network on dependency fetches (re-run job is fine).
+```yaml
+name: CI
+on:
+  push: [main, develop, feature/**, release/**, hotfix/**]
+  pull_request: [main, develop]
+permissions: { contents: read }
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+````
 
-## Decisions
+- **Triggers:** Pushes and PRs to main lines and topic branches.
+- **Concurrency:** Newer runs cancel older ones on the same ref → no CI pile-ups while iterating.
 
-- Start minimal; add coverage/CodeQL once green is consistent.
-- Keep pre-commit as the first gate (fast feedback locally + in CI).
+### Jobs
 
-## After-action
+1. **Pre-commit (lint/format gate)**
 
-- Note pipeline times, any flake causes, and tweaks carried into future weeks.
+   - Sets up Python 3.12, installs `pre-commit`, runs hooks repo-wide.
+   - **Gate behavior:** non-zero exit from hooks **fails** the job → PR blocked.
+
+2. **CodeQL (C/C++)**
+
+   - Initializes CodeQL, autobuilds, analyzes.
+   - **Purpose:** static security/quality analysis surfaced in the Security tab; optional but recommended as a required check later.
+
+3. **Week-1 Tests (matrix: compiler × config)**
+
+   - Locates the Week-1 dir dynamically (`weeks/W01_*`), installs `cmake`, `ninja`, `g++`, `clang`, `ccache`.
+   - Matrix:
+
+     - **compiler:** `gcc`, `clang`
+     - **config:** `Release`, `ASan` (AddressSanitizer)
+   - Exports `CC/CXX` through `ccache` to speed rebuilds.
+   - **Caching:**
+
+     - `~/.cache/ccache` (compiler cache) — safe to reuse across runs.
+     - `build-w01` (CMake build dir) — restores to avoid reconfigures (see caveats below).
+   - **Configure/Build/Test:**
+
+     - Adds `-DW01_ENABLE_ASAN=ON` when `config == ASan` (CMake must honor this).
+     - Runs `ctest --output-on-failure`.
+     - Collects CTest logs (XML/TAP/LastTest.log) as an artifact `w01-ctest-reports`.
+   - **Gate behavior:** any configure/build/test failure **fails** the job → PR blocked.
+
+4. **Week-2 Build (bench compiles; optional bounded smoke)**
+
+   - Locates `weeks/W02_*`, installs toolchain, configures, builds.
+   - Optional bench smoke: `timeout 60s ./build-w02/bench > bench.out 2>&1 || true; tail -n 80 bench.out`
+
+     - The `|| true` makes the smoke **non-gating** and immune to timeouts/exit codes.
+   - **Gate behavior:** build must succeed; the optional smoke never fails CI.
+
+---
+
+## Why each choice
+
+- **Python 3.12 for pre-commit:** Any modern Python works; 3.12 keeps the runner current; C++ jobs don't care.
+- **CodeQL:** Catches obvious foot-guns (UAF, UB patterns) early and builds the habit of security scanning.
+- **Compiler+sanitizer matrix:** Surfaces UB portability issues (GCC vs Clang) and memory bugs (ASan) before they ship.
+- **ccache + (optional) build dir cache:** Faster feedback loops. CI becomes useful when it's both strict **and** quick.
+- **Week-2 as build-only:** Long benches and huge logs are a poor PR gate. The short smoke makes behavior visible without blocking merges.
+
+---
+
+## Pitfalls met and how we neutralized them
+
+- **"Operation was canceled" on Week-2:** Either a newer push canceled the run (expected with concurrency) or the bench log/time blew past nice limits.
+  **Fix:** CI now **builds** Week-2 and treats bench runtime as **non-gating** with a 60s cap.
+- **CTest artifacts not always present:** We guard copies and upload whatever exists; TAP/XML may not be generated by default (depends on CTest config).
+- **Build cache cross-talk risk:** Caching `build-w01` across **different matrix axes** (GCC vs Clang, Release vs ASan) can restore incompatible artifacts.
+
+  - **Mitigation next time:** include `${{ matrix.compiler }}-${{ matrix.config }}` in the CMake cache key, or drop build-dir caching and keep only `ccache` (safe).
+
+---
+
+## How to mirror CI locally (quick recipes)
+
+### Week-1 (GCC Release)
+
+```bash
+cmake -S weeks/W01_20250804_reverse-stdlib -B build-w01 -G Ninja -DCMAKE_BUILD_TYPE=Release
+cmake --build build-w01 --parallel
+ctest --test-dir build-w01 --output-on-failure
+```
+
+### Week-1 (Clang + ASan)
+
+```bash
+export CC=clang CXX=clang++
+cmake -S weeks/W01_20250804_reverse-stdlib -B build-w01-asan -G Ninja -DCMAKE_BUILD_TYPE=Release -DW01_ENABLE_ASAN=ON
+cmake --build build-w01-asan --parallel
+ctest --test-dir build-w01-asan --output-on-failure
+```
+
+### Week-2 (build only)
+
+```bash
+cmake -S weeks/W02_20250811_dsa-benchmarks -B build-w02 -G Ninja -DCMAKE_BUILD_TYPE=Release
+cmake --build build-w02 --parallel
+# optional, bounded:
+timeout 60s ./build-w02/bench > bench.out 2>&1 || true
+tail -n 80 bench.out || true
+```
+
+---
+
+## What "passes" vs "fails" now
+
+- **Passes:**
+
+  - Pre-commit returns 0;
+  - Week-1 config/build/test succeed across the matrix;
+  - Week-2 config/build succeed (bench may time out or exit non-zero—non-gating).
+- **Fails (and blocks PR):**
+
+  - Any pre-commit non-zero;
+  - Week-1 configure/build errors;
+  - Any Week-1 test fails under any matrix axis.
+
+---
+
+## Artifacts & Logs
+
+- **`w01-ctest-reports`** (artifact): CTest logs and XML where available.
+- **`bench.out`** (Week-2, if smoke runs): last \~80 lines printed to job log; full file available in workspace for debugging within step scope.
+
+---
+
+## Known caveats / TODOs
+
+- **CMake build cache keying:** currently doesn't include matrix axes; tighten keys to avoid cross-config reuse:
+
+  - `key: cmake-w01-${{ runner.os }}-${{ matrix.compiler }}-${{ matrix.config }}-${{ hashFiles(...) }}`
+- **ASan switch:** ensure `-DW01_ENABLE_ASAN=ON` toggles `-fsanitize=address -fno-omit-frame-pointer` in Week-1 CMake (add an option if missing).
+- **Path filters (future):** restrict workflow triggers to Week-1 + infra paths to avoid pointless runs.
+- **Branch protection:** mark `Pre-commit`, both `week1-tests` matrix jobs, and `CodeQL` as required checks before merge.
+
+---
+
+## One-liner summary
+
+> CI now enforces style and correctness on Week-1 (GCC/Clang + ASan), compiles Week-2 without blocking on benches, and scans C/C++ with CodeQL—fast enough to use, strict enough to matter.
+
+## Changelog (Week-3)
+
+- Added `.github/workflows/ci.yml` with: `precommit`, `codeql`, `week1-tests` (gcc/clang × Release/ASan), `week2-build` (+ optional 60s bench smoke).
+- Introduced `ccache` and (experimental) build-dir caching.
+- Uploaded CTest logs as artifacts.
+- Documented non-gating policy for Week-2 performance runs.

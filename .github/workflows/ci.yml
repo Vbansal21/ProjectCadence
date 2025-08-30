@@ -28,9 +28,32 @@ jobs:
       - name: Run pre-commit on all files
         run: pre-commit run --all-files
 
-  week1-tests:
-    name: Build & test Week 1 (CMake + CTest)
+  codeql:
+    name: CodeQL (C/C++)
     runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+    strategy:
+      fail-fast: false
+      matrix:
+        language: [cpp]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: github/codeql-action/init@v3
+        with:
+          languages: cpp
+      - uses: github/codeql-action/autobuild@v3
+      - uses: github/codeql-action/analyze@v3
+
+  week1-tests:
+    name: Build & test Week 1 (CMake + CTest) ${{ matrix.compiler }} ${{ matrix.config }}
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        compiler: [gcc, clang]
+        config: [Release, ASan]
     steps:
       - uses: actions/checkout@v4
 
@@ -42,13 +65,51 @@ jobs:
           echo "dir=$W1" >> "$GITHUB_OUTPUT"
           if [ -z "$W1" ]; then echo "No Week 1 dir found; will skip."; fi
 
-      - name: Toolchain
+      - name: Toolchain + ccache
         if: ${{ steps.w1.outputs.dir != '' }}
-        run: sudo apt-get update && sudo apt-get install -y cmake ninja-build g++
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cmake ninja-build g++ clang ccache
+          if [ "${{ matrix.compiler }}" = "gcc" ]; then
+            echo "Using GCC toolchain"
+            echo 'export CC="ccache gcc"' >> $GITHUB_ENV
+            echo 'export CXX="ccache g++"' >> $GITHUB_ENV
+          else
+            echo "Using Clang toolchain"
+            echo 'export CC="ccache clang"' >> $GITHUB_ENV
+            echo 'export CXX="ccache clang++"' >> $GITHUB_ENV
+          fi
+          # Fallback to gcc if clang is not available
+          if ! command -v clang >/dev/null 2>&1; then
+            echo "Clang not found; falling back to GCC"
+            echo 'export CC="ccache gcc"' >> $GITHUB_ENV
+            echo 'export CXX="ccache g++"' >> $GITHUB_ENV
+          fi
+
+      - name: Cache ccache
+        uses: actions/cache@v4
+        with:
+            path: ~/.cache/ccache
+            key: ccache-${{ runner.os }}-${{ hashFiles('**/weeks/W01_*/**', '.github/workflows/ci.yml')}}
+            restore-keys: |
+              ccache-${{ runner.os}}-
+
+      - name: Cache CMake build directory
+        uses: actions/cache@v4
+        with:
+            path: build-w01
+            key: cmake-${{ runner.os }}-${{ hashFiles('**/weeks/W01_*/**', '.github/workflows/ci.yml')}}
+            restore-keys: |
+              cmake-${{ runner.os}}-
 
       - name: Configure (W01)
         if: ${{ steps.w1.outputs.dir != '' }}
-        run: cmake -S "${{ steps.w1.outputs.dir }}" -B build-w01 -G Ninja -DCMAKE_BUILD_TYPE=Release
+        run: |
+          EXTRA=""
+          if [ "${{ matrix.config }}" = "ASan" ]; then
+            EXTRA="-DW01_ENABLE_ASAN=ON"
+          fi
+          cmake -S "${{ steps.w1.outputs.dir }}" -B build-w01 -G Ninja -DCMAKE_BUILD_TYPE=Release $EXTRA
 
       - name: Build (W01)
         if: ${{ steps.w1.outputs.dir != '' }}
@@ -57,6 +118,33 @@ jobs:
       - name: Test (W01)
         if: ${{ steps.w1.outputs.dir != '' }}
         run: ctest --test-dir build-w01 --output-on-failure
+
+      - name: CTest with XML
+        run: |
+          if [ -d build-w01 ]; then
+            ctest --test-dir build-w01 --output-on-failure -T Test --no-compress-output
+            mkdir -p test-results
+            if [ -f build-w01/Testing/Temporary/LastTest.log ]; then
+              cp build-w01/Testing/Temporary/LastTest.log test-results/last-test.log
+            fi
+            if [ -f build-w01/Testing/Temporary/LastTestsFailed.log ]; then
+              cp build-w01/Testing/Temporary/LastTestsFailed.log test-results/last-tests-failed.log
+            fi
+            if [ -f build-w01/Testing/Temporary/LastTestsPassed.log ]; then
+              cp build-w01/Testing/Temporary/LastTestsPassed.log test-results/last-tests-passed.log
+            fi
+            if [ -f build-w01/Testing/TAP/*.xml ]; then
+              cp build-w01/Testing/TAP/*.xml test-results/
+            fi
+          else
+            echo "No build-w01 directory; skipping CTest XML export."
+          fi
+
+      - name: Upload CTest reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: w01-ctest-reports
+          path: build-w01/Testing/**/*
 
       - name: Skip Week 1 (no directory)
         if: ${{ steps.w1.outputs.dir == '' }}

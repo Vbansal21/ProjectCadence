@@ -2,6 +2,7 @@
 .venv/
 # python
 __pycache__/
+.history
 *.pyc
 *.pyo
 *.pyd
