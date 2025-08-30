@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Blog · ProjectCadence</title>
+    <link rel="stylesheet" href="../assets/css/site.css" />
+    <script defer src="https://unpkg.com/htmx.org@1.9.12"></script>
+    <script defer src="../assets/js/site.js"></script>
+</head>
+
+<body class="min-h-screen bg-neutral-950 text-neutral-100">
+    <header class="mx-auto max-w-5xl px-4 py-6">
+        <nav class="flex items-center justify-between">
+            <a href="../" class="text-lg font-semibold">ProjectCadence</a>
+            <a href="../" class="text-sm hover:underline">Home</a>
+        </nav>
+    </header>
+
+    <main class="mx-auto max-w-5xl px-4 py-10">
+        <h1 class="mb-6 text-2xl font-bold">Blog</h1>
+
+        <!-- Tag filter: swaps list via HTMX (pulls a static partial) -->
+        <div class="mb-6 flex flex-wrap items-center gap-2 text-sm">
+            <button class="tag" hx-get="./_partials/list.html" hx-target="#post-list" hx-swap="innerHTML">All</button>
+            <button class="tag" hx-get="./_partials/list.html?tag=accessibility" hx-target="#post-list"
+                hx-swap="innerHTML">Accessibility</button>
+            <button class="tag" hx-get="./_partials/list.html?tag=css" hx-target="#post-list"
+                hx-swap="innerHTML">CSS</button>
+            <button class="tag" hx-get="./_partials/list.html?tag=js" hx-target="#post-list"
+                hx-swap="innerHTML">JS</button>
+            <button class="tag" hx-get="./_partials/list.html?tag=d3" hx-target="#post-list"
+                hx-swap="innerHTML">D3</button>
+        </div>
+
+        <div id="post-list" hx-get="./_partials/list.html" hx-trigger="load" hx-swap="innerHTML" class="grid gap-6">
+            <p class="text-neutral-500">Loading…</p>
+        </div>
+    </main>
+</body>
+
+</html>

@@ -1,0 +1,366 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- Essentials -->
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Responsive Design: Fluid Type & Grid · ProjectCadence</title>
+    <meta name="description"
+        content="Modern responsive layout without frameworks: fluid typography with clamp(), resilient CSS Grid patterns, container queries, dynamic viewport units, and a live D3 probe of readability." />
+    <link rel="canonical" href="../posts/responsive-layouts.html" />
+
+    <!-- Styles & scripts (project-page safe, relative) -->
+    <link rel="stylesheet" href="../../assets/css/site.css" />
+    <script defer src="https://unpkg.com/htmx.org@1.9.12"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+    <script defer src="../../assets/js/site.js"></script>
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="Responsive Design: Fluid Type & Grid" />
+    <meta property="og:description"
+        content="Fluid type with clamp(), resilient grids, container queries, and a live readability probe." />
+    <meta property="og:image" content="../../assets/media/og-image.svg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="theme-color" content="#0a0a0a" />
+
+    <!-- BlogPosting schema -->
+    <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"BlogPosting",
+    "headline":"Responsive Design: Fluid Type & Grid",
+    "description":"Modern responsive layout without frameworks: fluid typography with clamp(), resilient CSS Grid patterns, container queries, dynamic viewport units, and a live D3 probe of readability.",
+    "author":{"@type":"Person","name":"Vaibhav Bansal"},
+    "datePublished":"2025-08-28",
+    "dateModified":"2025-08-30",
+    "image":"../../assets/media/og-image.svg",
+    "mainEntityOfPage":{"@type":"WebPage","@id":"../posts/responsive-layouts.html"}
+  }
+  </script>
+
+    <style>
+        /* Page-local helpers (keep tiny; Tailwind handles the rest) */
+        .kbd {
+            padding: .1rem .35rem;
+            border: 1px solid #3f3f46;
+            border-radius: .375rem;
+            background: #111827;
+            font-size: .85em;
+        }
+
+        .codeblock {
+            overflow-x: auto;
+            border: 1px solid #27272a;
+            background: #0b0b0e;
+            border-radius: .75rem;
+            padding: 1rem;
+        }
+
+        /* Demo grid on this page only */
+        .demo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+            gap: 1rem;
+        }
+
+        .demo-card {
+            border: 1px solid #27272a;
+            border-radius: .75rem;
+            padding: 1rem;
+            background: #0f0f14;
+        }
+
+        /* Better focus rings if Tailwind not loaded yet */
+        :focus-visible {
+            outline: 2px solid #93c5fd;
+            outline-offset: 2px;
+        }
+    </style>
+</head>
+
+<body class="min-h-screen bg-neutral-950 text-neutral-100">
+    <!-- Skip link -->
+    <a href="#content"
+        class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded focus:bg-neutral-800 focus:px-3 focus:py-2">Skip
+        to content</a>
+
+    <!-- Header -->
+    <header class="mx-auto max-w-5xl px-4 py-6">
+        <nav class="flex items-center justify-between" aria-label="Main">
+            <a href="../../index.html" class="text-lg font-semibold">ProjectCadence</a>
+            <ul class="flex gap-6 text-sm">
+                <li><a href="../index.html" class="hover:underline">Blog</a></li>
+                <li><a href="../../demos/d3-bar.html" class="hover:underline">D3 Demo</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main id="content" class="mx-auto max-w-3xl px-4 pb-24">
+        <article class="space-y-10">
+            <header class="mt-6 space-y-3">
+                <p class="text-xs uppercase tracking-widest text-neutral-400">CSS · Layout · D3</p>
+                <h1 class="text-3xl font-bold leading-tight">Responsive Design: Fluid Type &amp; Grid</h1>
+                <p class="text-neutral-400">Start content-out: let type and layout adapt smoothly, then add breakpoints
+                    only where the design actually strains.</p>
+            </header>
+
+            <!-- Contents -->
+            <nav aria-label="Table of contents" class="rounded-2xl border border-neutral-800 p-4">
+                <h2 class="mb-2 text-sm font-semibold text-neutral-300">Contents</h2>
+                <ol id="toc" class="list-decimal pl-5 text-sm text-neutral-400 space-y-1">
+                    <li><a href="#fluid-type" class="hover:underline">Fluid typography with <code>clamp()</code></a>
+                    </li>
+                    <li><a href="#grids" class="hover:underline">Resilient grids with <code>minmax()</code> and
+                            <code>auto-fit</code></a></li>
+                    <li><a href="#container-queries" class="hover:underline">Container queries for component
+                            breakpoints</a></li>
+                    <li><a href="#viewport-units" class="hover:underline">Dynamic viewport units on mobile</a></li>
+                    <li><a href="#live-probe" class="hover:underline">Live readability probe (D3)</a></li>
+                    <li><a href="#checklist" class="hover:underline">Checklist</a></li>
+                </ol>
+            </nav>
+
+            <section id="fluid-type" class="space-y-4">
+                <h2 class="text-2xl font-semibold">Fluid typography with <code>clamp()</code></h2>
+                <p>Use <code>clamp(min, preferred, max)</code> to scale type smoothly between bounds without brittle
+                    media queries. The preferred value can use viewport units, producing a curve that grows on larger
+                    viewports but never exceeds your maximum.</p>
+                <div class="codeblock text-sm">
+                    <pre><code>/* Fluid body and headings */
+:root { --step-0: clamp(1rem, 0.95rem + 0.4vw, 1.125rem); }
+body { font-size: var(--step-0); line-height: 1.55; }
+
+h1 { font-size: clamp(1.875rem, 1.3rem + 2.4vw, 2.75rem); line-height: 1.15; }
+h2 { font-size: clamp(1.5rem, 1.1rem + 1.6vw, 2rem); }
+.small { font-size: clamp(0.875rem, 0.82rem + 0.2vw, 0.95rem); }</code></pre>
+                </div>
+                <p class="text-neutral-400 text-sm">Set the curve so measure (characters per line) falls near 45–75 for
+                    body text. That’s where reading tends to be most comfortable.</p>
+            </section>
+
+            <section id="grids" class="space-y-4">
+                <h2 class="text-2xl font-semibold">Resilient grids with <code>minmax()</code> and <code>auto-fit</code>
+                </h2>
+                <p>CSS Grid can create adaptive card layouts that fill available space and gracefully change column
+                    count without JS. Use <code>repeat(auto-fit, minmax(&lt;min&gt;, 1fr))</code> so items wrap when
+                    they can’t meet the minimum size.</p>
+                <div class="codeblock text-sm">
+                    <pre><code>.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+  gap: 1rem;
+}</code></pre>
+                </div>
+
+                <div class="demo-grid">
+                    <div class="demo-card">Card 1</div>
+                    <div class="demo-card">Card 2</div>
+                    <div class="demo-card">Card 3</div>
+                    <div class="demo-card">Card 4</div>
+                    <div class="demo-card">Card 5</div>
+                    <div class="demo-card">Card 6</div>
+                    <div class="demo-card">Card 7</div>
+                    <div class="demo-card">Card 8</div>
+                </div>
+
+                <p class="text-neutral-400 text-sm">Use <code>auto-fit</code> to collapse empty tracks; use
+                    <code>auto-fill</code> when you want placeholder tracks to remain. Both pair well with
+                    <code>minmax()</code>.</p>
+            </section>
+
+            <section id="container-queries" class="space-y-4">
+                <h2 class="text-2xl font-semibold">Container queries for component breakpoints</h2>
+                <p>Media queries watch the viewport. <strong>Container queries</strong> watch the component’s container
+                    size, so the same component behaves correctly in a narrow sidebar or a wide main column—no duplicate
+                    breakpoints.</p>
+                <div class="codeblock text-sm">
+                    <pre><code>.card { container-type: inline-size; } /* opt-in container */
+@container (min-width: 30rem) {
+  .card .meta { display: grid; grid-template-columns: 1fr auto; }
+}</code></pre>
+                </div>
+            </section>
+
+            <section id="viewport-units" class="space-y-4">
+                <h2 class="text-2xl font-semibold">Dynamic viewport units on mobile</h2>
+                <p>Classic <code>vh</code> can mis-measure height as browser UI appears/disappears. The modern units
+                    <code>dvh</code>/<code>svh</code>/<code>lvh</code> account for dynamic, small, and large viewport
+                    sizes on mobile. Prefer <code>dvh</code> for full-height sections.</p>
+                <div class="codeblock text-sm">
+                    <pre><code>.hero { min-height: 100dvh; display:grid; place-items:center; padding: 2rem; }</code></pre>
+                </div>
+            </section>
+
+            <!-- LIVE READABILITY PROBE -->
+            <section id="live-probe" class="space-y-4">
+                <h2 class="text-2xl font-semibold">Live readability probe (D3)</h2>
+                <p class="text-neutral-400">This probe measures characters-per-line (CPL) for the paragraph below at
+                    your current viewport and visualizes it. Aim for the shaded 45–75 range for body text. Resize the
+                    window and watch it update.</p>
+
+                <p id="probe-text" class="rounded-2xl border border-neutral-800 bg-neutral-900/40 p-4">
+                    Responsive design isn’t device targeting; it’s content targeting. Start with fluid type and
+                    resilient grids so your layout breathes between reasonable bounds, then add a breakpoint only where
+                    your content actually needs a new structure.
+                </p>
+
+                <div id="probe-chart" class="rounded-2xl border border-neutral-800 p-4"></div>
+
+                <details class="rounded-2xl border border-neutral-800 p-4">
+                    <summary class="cursor-pointer font-semibold">How this measurement works</summary>
+                    <p class="mt-2 text-sm text-neutral-300">We compute the paragraph’s width and divide by an average
+                        character width sampled from the actual rendered font. It’s a heuristic—not typography law—but
+                        it’s a useful guardrail.</p>
+                </details>
+
+                <script>
+                    (function () {
+                        if (!window.d3) return;
+                        const d3 = window.d3;
+                        const el = document.getElementById("probe-chart");
+                        const para = document.getElementById("probe-text");
+                        if (!el || !para) return;
+
+                        function estimateCPL() {
+                            // Create a hidden sampler with the paragraph's computed font styles
+                            const sampler = document.createElement("span");
+                            sampler.textContent = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+                            const s = getComputedStyle(para);
+                            sampler.style.visibility = "hidden";
+                            sampler.style.whiteSpace = "nowrap";
+                            sampler.style.font = s.font;
+                            sampler.style.letterSpacing = s.letterSpacing;
+                            sampler.style.fontKerning = s.fontKerning;
+                            document.body.appendChild(sampler);
+                            const avgCharPx = sampler.getBoundingClientRect().width / sampler.textContent.length;
+                            sampler.remove();
+
+                            const widthPx = para.getBoundingClientRect().width;
+                            return Math.max(1, Math.round(widthPx / Math.max(1, avgCharPx)));
+                        }
+
+                        function render() {
+                            const width = Math.min(el.clientWidth || 720, 720);
+                            const height = 140;
+                            el.innerHTML = "";
+
+                            const cpl = estimateCPL();
+                            const targetMin = 45, targetMax = 75;
+                            const maxScale = 100;
+
+                            const margin = { top: 16, right: 24, bottom: 30, left: 40 };
+                            const x = d3.scaleLinear().domain([0, maxScale]).range([margin.left, width - margin.right]);
+
+                            const svg = d3.select(el).append("svg")
+                                .attr("width", width)
+                                .attr("height", height);
+
+                            // Target band
+                            svg.append("rect")
+                                .attr("x", x(targetMin))
+                                .attr("y", 40)
+                                .attr("width", x(targetMax) - x(targetMin))
+                                .attr("height", 30)
+                                .attr("fill", "#1f2937"); // neutral-800
+
+                            // Current value bar
+                            svg.append("rect")
+                                .attr("x", x(0))
+                                .attr("y", 45)
+                                .attr("width", x(Math.min(cpl, maxScale)) - x(0))
+                                .attr("height", 20)
+                                .attr("rx", 6)
+                                .attr("fill", "#e5e7eb"); // neutral-300
+
+                            // Axis
+                            const axis = d3.axisBottom(x).ticks(10);
+                            svg.append("g")
+                                .attr("transform", `translate(0,${100})`)
+                                .call(axis)
+                                .call(g => g.selectAll("text").attr("fill", "#9ca3af"))
+                                .call(g => g.selectAll("line,path").attr("stroke", "#374151"));
+
+                            // Labels
+                            svg.append("text")
+                                .attr("x", x(cpl) + 6)
+                                .attr("y", 40)
+                                .attr("fill", "#9ca3af")
+                                .style("font-size", "12px")
+                                .text(cpl + " CPL");
+
+                            svg.append("text")
+                                .attr("x", x(targetMin))
+                                .attr("y", 30)
+                                .attr("fill", "#9ca3af")
+                                .style("font-size", "12px")
+                                .text("Target range");
+
+                            // Caption
+                            svg.append("text")
+                                .attr("x", margin.left)
+                                .attr("y", height - 6)
+                                .attr("fill", "#9ca3af")
+                                .style("font-size", "12px")
+                                .text("Characters per line (higher is wider lines).");
+                        }
+
+                        let raf;
+                        function queuedRender() {
+                            if (raf) cancelAnimationFrame(raf);
+                            raf = requestAnimationFrame(render);
+                        }
+                        window.addEventListener("resize", queuedRender, { passive: true });
+                        queuedRender();
+                    })();
+                </script>
+            </section>
+
+            <section id="checklist" class="space-y-3">
+                <h2 class="text-2xl font-semibold">Checklist</h2>
+                <ul class="list-disc pl-5 space-y-2">
+                    <li>Use <code>clamp()</code> for fluid type; choose bounds that keep measure ~45–75 CPL for body.
+                    </li>
+                    <li>Use Grid with <code>repeat(auto-fit, minmax(&lt;min&gt;, 1fr))</code> for adaptive cards; reach
+                        for <code>auto-fill</code> when placeholder tracks should remain.</li>
+                    <li>Prefer container queries for component-level breakpoints; opt-in with
+                        <code>container-type</code>.</li>
+                    <li>On mobile, prefer <code>dvh</code> for full-height sections to avoid browser chrome jumps.</li>
+                    <li>Keep focus rings visible and respect reduced motion—responsiveness includes accessibility.</li>
+                </ul>
+            </section>
+
+            <footer class="pt-6 text-sm text-neutral-400">
+                <p>Tags: css · grid · responsive · d3</p>
+                <p class="mt-1">© 2025 Vaibhav Bansal</p>
+            </footer>
+        </article>
+    </main>
+
+    <footer class="mx-auto max-w-5xl px-4 pb-10 text-sm text-neutral-500">
+        <a href="../index.html" class="hover:underline">← Back to Blog</a>
+    </footer>
+
+    <!-- Progressive enhancement: rebuild ToC from actual sections -->
+    <script>
+        (function () {
+            const toc = document.getElementById("toc");
+            const sections = document.querySelectorAll("article section[id]");
+            if (!toc || !sections.length) return;
+            toc.innerHTML = "";
+            sections.forEach(sec => {
+                const h = sec.querySelector("h2");
+                if (!h) return;
+                const li = document.createElement("li");
+                const a = document.createElement("a");
+                a.href = "#" + sec.id;
+                a.textContent = h.textContent || sec.id;
+                a.className = "hover:underline";
+                li.appendChild(a);
+                toc.appendChild(li);
+            });
+        })();
+    </script>
+</body>
+
+</html>

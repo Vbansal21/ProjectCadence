@@ -1,0 +1,391 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- Essentials -->
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Semantic HTML for A11y & SEO · ProjectCadence</title>
+    <meta name="description"
+        content="A practical guide to landmarks, headings, links vs. buttons, alt text, forms, tables, and metadata—plus a live self-audit and D3 visualization." />
+    <link rel="canonical" href="../posts/semantic-accessibility.html" />
+
+    <!-- Styles & scripts (project-page safe, relative) -->
+    <link rel="stylesheet" href="../../assets/css/site.css" />
+    <script defer src="https://unpkg.com/htmx.org@1.9.12"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+    <script defer src="../../assets/js/site.js"></script>
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="Semantic HTML for A11y & SEO" />
+    <meta property="og:description"
+        content="Landmarks, headings, alt text, and metadata that make pages usable and findable—plus a live self-audit." />
+    <meta property="og:image" content="../../assets/media/og-image.svg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="theme-color" content="#0a0a0a" />
+
+    <!-- BlogPosting schema -->
+    <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"BlogPosting",
+    "headline":"Semantic HTML for A11y & SEO",
+    "description":"A practical guide to landmarks, headings, links vs. buttons, alt text, forms, tables, and metadata—plus a live self-audit and D3 visualization.",
+    "author":{"@type":"Person","name":"Vaibhav Bansal"},
+    "datePublished":"2025-08-25",
+    "dateModified":"2025-08-30",
+    "image":"../../assets/media/og-image.svg",
+    "mainEntityOfPage":{"@type":"WebPage","@id":"../posts/semantic-accessibility.html"}
+  }
+  </script>
+</head>
+
+<body class="min-h-screen bg-neutral-950 text-neutral-100">
+    <!-- Skip link -->
+    <a href="#content"
+        class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded focus:bg-neutral-800 focus:px-3 focus:py-2">
+        Skip to content
+    </a>
+
+    <!-- Header -->
+    <header class="mx-auto max-w-5xl px-4 py-6">
+        <nav class="flex items-center justify-between" aria-label="Main">
+            <a href="../../index.html" class="text-lg font-semibold">ProjectCadence</a>
+            <ul class="flex gap-6 text-sm">
+                <li><a href="../index.html" class="hover:underline">Blog</a></li>
+                <li><a href="../../demos/d3-bar.html" class="hover:underline">D3 Demo</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main id="content" class="mx-auto max-w-3xl px-4 pb-24">
+        <article class="space-y-10">
+            <header class="mt-6 space-y-3">
+                <p class="text-xs uppercase tracking-widest text-neutral-400">A11y · SEO · HTML</p>
+                <h1 class="text-3xl font-bold leading-tight">Semantic HTML for A11y &amp; SEO</h1>
+                <p class="text-neutral-400">Structure is your first accessibility layer and your first SEO hint. Use the
+                    right elements, then add ARIA only where HTML can’t express intent.</p>
+            </header>
+
+            <!-- Contents (static baseline; JS will enhance) -->
+            <nav aria-label="Table of contents" class="rounded-2xl border border-neutral-800 p-4">
+                <h2 class="mb-2 text-sm font-semibold text-neutral-300">Contents</h2>
+                <ol id="toc" class="list-decimal pl-5 text-sm text-neutral-400 space-y-1">
+                    <li><a href="#why" class="hover:underline">Why semantics matter</a></li>
+                    <li><a href="#landmarks" class="hover:underline">Landmarks before ARIA</a></li>
+                    <li><a href="#headings" class="hover:underline">Headings as an outline</a></li>
+                    <li><a href="#links-buttons" class="hover:underline">Links vs. buttons</a></li>
+                    <li><a href="#images" class="hover:underline">Images, alt, and figures</a></li>
+                    <li><a href="#forms" class="hover:underline">Forms with labels</a></li>
+                    <li><a href="#tables" class="hover:underline">Tables with structure</a></li>
+                    <li><a href="#metadata" class="hover:underline">Metadata & structured data</a></li>
+                    <li><a href="#audit" class="hover:underline">Live self-audit (D3)</a></li>
+                    <li><a href="#checklist" class="hover:underline">One-page checklist</a></li>
+                </ol>
+            </nav>
+
+            <section id="why" class="space-y-4">
+                <h2 class="text-2xl font-semibold">Why semantics matter</h2>
+                <p>Semantic HTML gives meaning to structure (<code>&lt;h1&gt;</code>…<code>&lt;h6&gt;</code>,
+                    <code>&lt;nav&gt;</code>, <code>&lt;main&gt;</code>), which screen readers, search engines, and
+                    browsers can use immediately—no JS required. Start with native semantics; layer ARIA only to fill
+                    gaps. That approach yields better keyboard navigation, more robust rendering, and clearer signals
+                    for crawlers. :contentReference[oaicite:0]{index=0}</p>
+            </section>
+
+            <section id="landmarks" class="space-y-4">
+                <h2 class="text-2xl font-semibold">Landmarks before ARIA</h2>
+                <p>Use <code>&lt;header&gt;</code>, <code>&lt;nav&gt;</code>, <code>&lt;main&gt;</code>,
+                    <code>&lt;aside&gt;</code>, <code>&lt;footer&gt;</code> to expose page regions. If you must use
+                    ARIA, don’t override native semantics; ARIA is a supplement, not a replacement.
+                    :contentReference[oaicite:1]{index=1}</p>
+                <pre class="overflow-x-auto rounded-xl border border-neutral-800 bg-neutral-900 p-4 text-sm"><code>&lt;header&gt;...&lt;/header&gt;
+&lt;nav aria-label="Main"&gt;...&lt;/nav&gt;
+&lt;main id="main"&gt;...&lt;/main&gt;
+&lt;aside aria-label="Related"&gt;...&lt;/aside&gt;
+&lt;footer&gt;...&lt;/footer&gt;</code></pre>
+            </section>
+
+            <section id="headings" class="space-y-4">
+                <h2 class="text-2xl font-semibold">Headings as an outline</h2>
+                <p>Headings communicate hierarchy to assistive tech and search. Keep levels logical; avoid skipping for
+                    visual styling alone. If you must style, still use proper heading elements or ARIA
+                    <code>role="heading"</code> with a level. :contentReference[oaicite:2]{index=2}</p>
+            </section>
+
+            <section id="links-buttons" class="space-y-4">
+                <h2 class="text-2xl font-semibold">Links vs. buttons</h2>
+                <ul class="list-disc pl-5 space-y-2">
+                    <li><strong>Link</strong> (<code>&lt;a href&gt;</code>) navigates to a URL.</li>
+                    <li><strong>Button</strong> (<code>&lt;button&gt;</code>) performs an action on the current page.
+                    </li>
+                </ul>
+                <p class="text-neutral-400 text-sm">Don’t attach click handlers to generic
+                    <code>&lt;div&gt;</code>/<code>&lt;span&gt;</code> for interactive controls—keyboard users will lose
+                    out. :contentReference[oaicite:3]{index=3}</p>
+            </section>
+
+            <section id="images" class="space-y-4">
+                <h2 class="text-2xl font-semibold">Images, alt, and figures</h2>
+                <p>Use purposeful <code>alt</code>. Decorative images should have empty <code>alt=""</code>. Pair
+                    diagrams with <code>&lt;figure&gt;</code> + <code>&lt;figcaption&gt;</code>.
+                    :contentReference[oaicite:4]{index=4}</p>
+                <figure class="rounded-2xl border border-neutral-800 p-4">
+                    <img src="../../assets/media/og-image.svg" alt="ProjectCadence banner" width="1200" height="630" />
+                    <figcaption class="mt-2 text-sm text-neutral-400">Banner image: descriptive alt conveys purpose.
+                    </figcaption>
+                </figure>
+            </section>
+
+            <section id="forms" class="space-y-4">
+                <h2 class="text-2xl font-semibold">Forms with labels</h2>
+                <p>Associate labels with inputs; announce errors via <code>aria-describedby</code>; group related
+                    controls with <code>fieldset</code>/<code>legend</code>. :contentReference[oaicite:5]{index=5}</p>
+                <pre class="overflow-x-auto rounded-xl border border-neutral-800 bg-neutral-900 p-4 text-sm"><code>&lt;label for="email"&gt;Email&lt;/label&gt;
+&lt;input id="email" name="email" type="email" aria-describedby="email-hint" /&gt;
+&lt;p id="email-hint" class="text-neutral-400"&gt;We'll never share your email.&lt;/p&gt;</code></pre>
+            </section>
+
+            <section id="tables" class="space-y-4">
+                <h2 class="text-2xl font-semibold">Tables with structure</h2>
+                <p>Add a <code>&lt;caption&gt;</code>; use <code>&lt;th scope&gt;</code>; separate
+                    <code>&lt;thead&gt;</code>/<code>&lt;tbody&gt;</code>. :contentReference[oaicite:6]{index=6}</p>
+                <pre class="overflow-x-auto rounded-xl border border-neutral-800 bg-neutral-900 p-4 text-sm"><code>&lt;table&gt;
+  &lt;caption&gt;Color contrast samples&lt;/caption&gt;
+  &lt;thead&gt;&lt;tr&gt;&lt;th scope="col"&gt;Text&lt;/th&gt;&lt;th scope="col"&gt;Background&lt;/th&gt;&lt;th scope="col"&gt;Ratio&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;
+  &lt;tbody&gt;&lt;tr&gt;&lt;th scope="row"&gt;#e5e5e5&lt;/th&gt;&lt;td&gt;#0a0a0a&lt;/td&gt;&lt;td&gt;13.5:1&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;
+&lt;/table&gt;</code></pre>
+            </section>
+
+            <section id="metadata" class="space-y-4">
+                <h2 class="text-2xl font-semibold">Metadata & structured data</h2>
+                <p>Give each page a specific <code>&lt;title&gt;</code> and <code>meta name="description"</code>. Use
+                    canonical URLs to avoid duplicates. Add Article/BlogPosting structured data for richer results.
+                    :contentReference[oaicite:7]{index=7}</p>
+            </section>
+
+            <!-- LIVE SELF-AUDIT -->
+            <section id="audit" class="space-y-4">
+                <h2 class="text-2xl font-semibold">Live self-audit (D3)</h2>
+                <p class="text-neutral-400">These metrics are computed from this page’s DOM at load time. If you break a
+                    rule, the chart and details will reflect it.</p>
+
+                <!-- Fallback (no-JS) -->
+                <div class="overflow-x-auto rounded-2xl border border-neutral-800">
+                    <table class="min-w-full text-sm">
+                        <caption class="px-4 py-3 text-left text-neutral-400">Baseline metrics (static fallback)
+                        </caption>
+                        <thead class="bg-neutral-900/60 text-neutral-300">
+                            <tr>
+                                <th class="px-4 py-2 text-left">Check</th>
+                                <th class="px-4 py-2 text-left">Result</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-neutral-800">
+                            <tr>
+                                <td class="px-4 py-2">Landmarks present</td>
+                                <td class="px-4 py-2">Yes</td>
+                            </tr>
+                            <tr>
+                                <td class="px-4 py-2">Heading outline sane</td>
+                                <td class="px-4 py-2">Yes</td>
+                            </tr>
+                            <tr>
+                                <td class="px-4 py-2">Images with alt</td>
+                                <td class="px-4 py-2">Yes</td>
+                            </tr>
+                            <tr>
+                                <td class="px-4 py-2">Form labels associated</td>
+                                <td class="px-4 py-2">Yes</td>
+                            </tr>
+                            <tr>
+                                <td class="px-4 py-2">Table semantics present</td>
+                                <td class="px-4 py-2">Yes</td>
+                            </tr>
+                            <tr>
+                                <td class="px-4 py-2">Metadata & JSON-LD</td>
+                                <td class="px-4 py-2">Yes</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- D3 mount + issue list -->
+                <div id="audit-chart" class="rounded-2xl border border-neutral-800 p-4"></div>
+                <details class="rounded-2xl border border-neutral-800 p-4">
+                    <summary class="cursor-pointer font-semibold">Details & failures</summary>
+                    <ul id="audit-issues" class="mt-3 list-disc pl-5 text-sm text-neutral-300"></ul>
+                </details>
+
+                <!-- Audit logic + D3 chart (no Tailwind utility classes inside SVG) -->
+                <script>
+                    (function () {
+                        const issues = [];
+                        function exists(sel) { return document.querySelector(sel) !== null; }
+                        function count(sel) { return document.querySelectorAll(sel).length; }
+
+                        // Checks
+                        const hasLandmarks = exists('header') && exists('nav') && exists('main') && exists('footer'); // WebAIM/MDN landmarks
+                        if (!hasLandmarks) issues.push("Missing one or more landmarks: header/nav/main/footer.");
+
+                        // Headings sanity: monotonic non-jumping (allow small skips but flag big ones)
+                        const hs = Array.from(document.querySelectorAll('h1, h2, h3, h4, h5, h6'))
+                            .map(h => ({ level: Number(h.tagName.substring(1)), text: h.textContent?.trim() || '' }));
+                        let headingOk = hs.length > 0;
+                        for (let i = 1; i < hs.length; i++) {
+                            const prev = hs[i - 1].level, cur = hs[i].level;
+                            if (cur - prev > 1) { headingOk = false; issues.push(`Heading jump from h${prev} to h${cur}: “${hs[i].text}”.`); }
+                        }
+
+                        // Images alt coverage
+                        const imgs = Array.from(document.querySelectorAll('article img'));
+                        const altOk = imgs.every(img => img.hasAttribute('alt'));
+                        if (!altOk) issues.push("One or more images are missing alt attributes.");
+
+                        // Forms labeling
+                        const inputs = Array.from(document.querySelectorAll('article input, article select, article textarea'));
+                        const labels = new Set(Array.from(document.querySelectorAll('label[for]')).map(l => l.getAttribute('for')));
+                        const unlabeled = inputs.filter(el => {
+                            const id = el.getAttribute('id');
+                            const wrapped = el.closest('label') !== null;
+                            return !(wrapped || (id && labels.has(id)));
+                        });
+                        const formsOk = unlabeled.length === 0;
+                        if (!formsOk) issues.push(`Found ${unlabeled.length} form control(s) without associated label.`);
+
+                        // Table semantics
+                        const table = document.querySelector('article table');
+                        const tableOk = !!table && table.querySelector('caption, thead th, tbody th');
+                        if (!tableOk) issues.push("Table missing caption and/or header scope.");
+
+                        // Metadata presence
+                        const hasTitle = !!document.title;
+                        const hasDesc = !!document.querySelector('meta[name="description"]');
+                        const hasLD = !!document.querySelector('script[type="application/ld+json"]');
+                        const metaOk = hasTitle && hasDesc && hasLD;
+                        if (!metaOk) issues.push("Missing title/description/JSON-LD structured data.");
+
+                        // Aggregate percentages
+                        const metrics = [
+                            { k: "Landmarks", v: hasLandmarks ? 100 : 0 },
+                            { k: "Headings", v: headingOk ? 100 : 0 },
+                            { k: "Images/Alt", v: altOk ? 100 : Math.max(0, Math.round(100 * (imgs.length - (imgs.filter(i => !i.hasAttribute('alt')).length)) / Math.max(1, imgs.length))) },
+                            { k: "Forms", v: formsOk ? 100 : Math.max(0, Math.round(100 * (inputs.length - unlabeled.length) / Math.max(1, inputs.length))) },
+                            { k: "Tables", v: tableOk ? 100 : 0 },
+                            { k: "Metadata", v: metaOk ? 100 : 0 }
+                        ];
+
+                        // Render D3 bar chart
+                        if (window.d3) {
+                            const d3 = window.d3;
+                            const el = document.getElementById("audit-chart");
+                            if (el) {
+                                const width = Math.min(el.clientWidth || 720, 720);
+                                const height = 28 * metrics.length + 50;
+                                const margin = { top: 10, right: 24, bottom: 24, left: 120 };
+                                const x = d3.scaleLinear().domain([0, 100]).range([margin.left, width - margin.right]);
+                                const y = d3.scaleBand().domain(metrics.map(d => d.k)).range([margin.top, height - margin.bottom]).padding(0.25);
+
+                                const svg = d3.select(el).append("svg").attr("width", width).attr("height", height);
+
+                                svg.append("g").selectAll("rect").data(metrics).enter().append("rect")
+                                    .attr("x", x(0))
+                                    .attr("y", d => y(d.k))
+                                    .attr("width", d => x(d.v) - x(0))
+                                    .attr("height", y.bandwidth())
+                                    .attr("rx", 6)
+                                    .attr("fill", "#e5e7eb"); // neutral-300
+
+                                svg.append("g").selectAll("text.k").data(metrics).enter().append("text")
+                                    .attr("x", margin.left - 12)
+                                    .attr("y", d => y(d.k) + y.bandwidth() / 2)
+                                    .attr("dy", "0.35em")
+                                    .attr("text-anchor", "end")
+                                    .attr("fill", "#e5e7eb")
+                                    .style("font-size", "12px")
+                                    .text(d => d.k);
+
+                                svg.append("g").selectAll("text.v").data(metrics).enter().append("text")
+                                    .attr("x", d => x(d.v) + 6)
+                                    .attr("y", d => y(d.k) + y.bandwidth() / 2)
+                                    .attr("dy", "0.35em")
+                                    .attr("fill", "#9ca3af") // neutral-400
+                                    .style("font-size", "12px")
+                                    .text(d => d.v + "%");
+
+                                const axis = d3.axisBottom(x).ticks(5).tickFormat(d => d + "%");
+                                svg.append("g")
+                                    .attr("transform", `translate(0,${height - margin.bottom})`)
+                                    .call(axis)
+                                    .call(g => g.selectAll("text").attr("fill", "#9ca3af"))
+                                    .call(g => g.selectAll("line,path").attr("stroke", "#374151"));
+                            }
+                        }
+
+                        // Issue list
+                        const ul = document.getElementById("audit-issues");
+                        if (ul) {
+                            if (issues.length === 0) {
+                                const li = document.createElement("li");
+                                li.textContent = "No issues found. (Break a rule to see this update.)";
+                                ul.appendChild(li);
+                            } else {
+                                issues.forEach(msg => { const li = document.createElement("li"); li.textContent = msg; ul.appendChild(li); });
+                            }
+                        }
+
+                        // Enhance ToC (keeps static baseline)
+                        const toc = document.getElementById("toc");
+                        const sections = document.querySelectorAll("article section[id]");
+                        if (toc && sections.length) {
+                            toc.innerHTML = "";
+                            sections.forEach(sec => {
+                                const h = sec.querySelector("h2");
+                                if (!h) return;
+                                const li = document.createElement("li");
+                                const a = document.createElement("a");
+                                a.href = "#" + sec.id;
+                                a.textContent = h.textContent || sec.id;
+                                a.className = "hover:underline";
+                                li.appendChild(a); toc.appendChild(li);
+                            });
+                        }
+                    })();
+                </script>
+            </section>
+
+            <section id="checklist" class="space-y-3">
+                <h2 class="text-2xl font-semibold">One-page checklist</h2>
+                <ul class="list-disc pl-5 space-y-2">
+                    <li><code>&lt;html lang="en"&gt;</code>, specific <code>&lt;title&gt;</code>, and meaningful
+                        <code>&lt;meta name="description"&gt;</code>. :contentReference[oaicite:8]{index=8}</li>
+                    <li>Landmarks in place; add ARIA only when HTML lacks semantics.
+                        :contentReference[oaicite:9]{index=9}</li>
+                    <li>Consistent heading outline (or ARIA <code>role="heading"</code> + level if needed).
+                        :contentReference[oaicite:10]{index=10}</li>
+                    <li>Links navigate; buttons act. No interactive <code>div</code>/<code>span</code>.
+                        :contentReference[oaicite:11]{index=11}</li>
+                    <li>Alt text conveys purpose; decorative images use empty <code>alt</code>.
+                        :contentReference[oaicite:12]{index=12}</li>
+                    <li>Forms have labels; errors are announced; groups use <code>fieldset</code>/<code>legend</code>.
+                        :contentReference[oaicite:13]{index=13}</li>
+                    <li>Tables: caption, header cells with scope, proper sections.
+                        :contentReference[oaicite:14]{index=14}</li>
+                    <li>Structured data (Article/BlogPosting) for rich results. :contentReference[oaicite:15]{index=15}
+                    </li>
+                </ul>
+            </section>
+
+            <footer class="pt-6 text-sm text-neutral-400">
+                <p>Tags: accessibility · seo · html</p>
+                <p class="mt-1">© 2025 Vaibhav Bansal</p>
+            </footer>
+        </article>
+    </main>
+
+    <footer class="mx-auto max-w-5xl px-4 pb-10 text-sm text-neutral-500">
+        <a href="../index.html" class="hover:underline">← Back to Blog</a>
+    </footer>
+</body>
+
+</html>
