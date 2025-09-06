@@ -1,0 +1,15 @@
+{
+    "openapi": "3.0.3",
+    "info": { "title": "Week-05 REST API", "version": "0.1.0" },
+    "paths": {
+      "/health": { "get": { "summary": "Liveness", "responses": { "200": { "description": "OK" } } } },
+      "/users": {
+        "get": { "summary": "List users", "responses": { "200": { "description": "OK" } } },
+        "post": {
+          "summary": "Create user",
+          "requestBody": { "required": true },
+          "responses": { "201": { "description": "Created" }, "400": { "description": "ValidationError" } }
+        }
+      }
+    }
+  }
