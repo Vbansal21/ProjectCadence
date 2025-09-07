@@ -164,7 +164,7 @@
 <body>
     <header>
         <strong>Week-05 API Console</strong>
-        <label class="mono">API Base <input id="base" value="/" style="width:110px"></label>
+        <label class="mono">API Base <input id="base" value="/v1" style="width:110px"></label>
         <label class="mono">x-api-key <input id="key" placeholder="optional" style="width:150px"></label>
         <button id="save">Save</button><span id="busy">⟳</span>
     </header>
@@ -240,7 +240,7 @@
         </section>
     </main>
 
-    <footer>Change API Base to “/v1” when you enable versioning.</footer>
+    <footer>Change API Base to "/v1" when you enable versioning.</footer>
 
     <script>
         const $ = id => document.getElementById(id), busy = $("busy"), err = $("err");

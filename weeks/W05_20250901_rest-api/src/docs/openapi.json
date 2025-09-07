@@ -1,29 +1,77 @@
 {
   "openapi": "3.0.3",
-  "info": { "title": "Week-05 REST API", "version": "0.2.0" },
+  "info": { "title": "Week-05 REST API", "version": "1.0.0" },
+  "servers": [{ "url": "/v1" }],
   "components": {
     "schemas": {
-      "User": { "type": "object", "properties": {
-        "id": { "type": "string", "format": "uuid" },
-        "name": { "type": "string" }, "email": { "type": "string", "format": "email" },
-        "createdAt": { "type": "string", "format": "date-time" },
-        "updatedAt": { "type": "string", "format": "date-time" }
-      }},
-      "Article": { "type": "object", "properties": {
-        "id": { "type": "string", "format": "uuid" },
-        "title": { "type": "string" }, "body": { "type": "string" },
-        "authorId": { "type": "string", "format": "uuid" },
-        "createdAt": { "type": "string", "format": "date-time" },
-        "updatedAt": { "type": "string", "format": "date-time" }
-      }},
-      "Comment": { "type": "object", "properties": {
-        "id": { "type": "string", "format": "uuid" },
-        "articleId": { "type": "string", "format": "uuid" },
-        "authorId": { "type": "string", "format": "uuid" },
-        "text": { "type": "string" },
-        "createdAt": { "type": "string", "format": "date-time" },
-        "updatedAt": { "type": "string", "format": "date-time" }
-      }}
+      "User": {
+        "type": "object",
+        "required": ["id","name","email","createdAt","updatedAt"],
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "name": { "type": "string", "minLength": 2, "maxLength": 64 },
+          "email": { "type": "string", "format": "email" },
+          "createdAt": { "type": "string", "format": "date-time" },
+          "updatedAt": { "type": "string", "format": "date-time" }
+        }
+      },
+      "UserCreate": {
+        "type": "object",
+        "required": ["name","email"],
+        "properties": {
+          "name": { "type": "string", "minLength": 2, "maxLength": 64 },
+          "email": { "type": "string", "format": "email" }
+        }
+      },
+      "Article": {
+        "type": "object",
+        "required": ["id","title","authorId","createdAt","updatedAt"],
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "title": { "type": "string", "minLength": 3, "maxLength": 120 },
+          "body": { "type": "string" },
+          "authorId": { "type": "string", "format": "uuid" },
+          "createdAt": { "type": "string", "format": "date-time" },
+          "updatedAt": { "type": "string", "format": "date-time" }
+        }
+      },
+      "ArticleCreate": {
+        "type": "object",
+        "required": ["title","body","authorId"],
+        "properties": {
+          "title": { "type": "string", "minLength": 3, "maxLength": 120 },
+          "body": { "type": "string" },
+          "authorId": { "type": "string", "format": "uuid" }
+        }
+      },
+      "Comment": {
+        "type": "object",
+        "required": ["id","articleId","text","createdAt","updatedAt"],
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "articleId": { "type": "string", "format": "uuid" },
+          "authorId": { "type": "string", "format": "uuid" },
+          "text": { "type": "string", "minLength": 1, "maxLength": 1000 },
+          "createdAt": { "type": "string", "format": "date-time" },
+          "updatedAt": { "type": "string", "format": "date-time" }
+        }
+      },
+      "CommentCreate": {
+        "type": "object",
+        "required": ["articleId","text"],
+        "properties": {
+          "articleId": { "type": "string", "format": "uuid" },
+          "authorId": { "type": "string", "format": "uuid" },
+          "text": { "type": "string", "minLength": 1, "maxLength": 1000 }
+        }
+      },
+      "Error": {
+        "type": "object",
+        "properties": {
+          "error": { "type": "string" },
+          "rid": { "type": "string" }
+        }
+      }
     },
     "securitySchemes": {
       "apiKey": { "type": "apiKey", "in": "header", "name": "x-api-key" }
@@ -31,8 +79,36 @@
   },
   "security": [{ "apiKey": [] }],
   "paths": {
-    "/users": { "get": { "summary": "List users", "responses": { "200": { "description": "OK" } } } },
-    "/articles": { "get": { "summary": "List articles", "responses": { "200": { "description": "OK" } } } },
-    "/comments": { "get": { "summary": "List comments", "responses": { "200": { "description": "OK" } } } }
+    "/users": {
+      "get": { "summary": "List users", "responses": { "200": { "description": "OK" } } },
+      "post": {
+        "summary": "Create user",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/UserCreate" } } } },
+        "responses": { "201": { "description": "Created" }, "400": { "description": "ValidationError", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } } }
+      }
+    },
+    "/users/{id}": {
+      "get": { "summary": "Get user", "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }], "responses": { "200": { "description": "OK" }, "404": { "description": "Not Found" } } },
+      "put": { "summary": "Update user", "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }], "responses": { "200": { "description": "OK" }, "400": { "description": "ValidationError" }, "404": { "description": "Not Found" } } },
+      "delete": { "summary": "Delete user", "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }], "responses": { "204": { "description": "No Content" }, "404": { "description": "Not Found" } } }
+    },
+    "/articles": {
+      "get": { "summary": "List articles (supports ?authorId, ?page, ?limit, ?sort=field:dir)", "responses": { "200": { "description": "OK" } } },
+      "post": { "summary": "Create article", "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ArticleCreate" } } } }, "responses": { "201": { "description": "Created" }, "400": { "description": "ValidationError / Invalid authorId" } } }
+    },
+    "/articles/{id}": {
+      "get": { "summary": "Get article", "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }], "responses": { "200": { "description": "OK" }, "404": { "description": "Not Found" } } },
+      "put": { "summary": "Update article", "parameters": [{ "name": "id","in": "path","required": true,"schema": { "type": "string","format": "uuid" } }], "responses": { "200": { "description": "OK" }, "404": { "description": "Not Found" } } },
+      "delete": { "summary": "Delete article", "parameters": [{ "name": "id","in": "path","required": true,"schema": { "type": "string","format": "uuid" } }], "responses": { "204": { "description": "No Content" }, "404": { "description": "Not Found" } } }
+    },
+    "/comments": {
+      "get": { "summary": "List comments (supports ?articleId, ?authorId, ?page, ?limit)", "responses": { "200": { "description": "OK" } } },
+      "post": { "summary": "Create comment", "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/CommentCreate" } } } }, "responses": { "201": { "description": "Created" }, "400": { "description": "ValidationError / Invalid articleId / Invalid authorId" } } }
+    },
+    "/comments/{id}": {
+      "get": { "summary": "Get comment", "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }], "responses": { "200": { "description": "OK" }, "404": { "description": "Not Found" } } },
+      "put": { "summary": "Update comment", "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }], "responses": { "200": { "description": "OK" }, "404": { "description": "Not Found" } } },
+      "delete": { "summary": "Delete comment", "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }], "responses": { "204": { "description": "No Content" }, "404": { "description": "Not Found" } } }
+    }
   }
 }

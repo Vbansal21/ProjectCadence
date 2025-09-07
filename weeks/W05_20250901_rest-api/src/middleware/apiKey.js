@@ -5,7 +5,7 @@ export function apiKey() {
   const key = config.apiKey;        // undefined means "auth off"
   return (req, res, next) => {
     // Skip enforcement if no key configured or during tests
-    if (!key || process.env.NODE_ENV === "test") return next();
+    if (!key) return next();
 
     const provided = req.header("x-api-key") || "";
     if (provided === key) return next();

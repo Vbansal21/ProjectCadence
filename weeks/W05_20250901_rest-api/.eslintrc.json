@@ -1,0 +1,6 @@
+{
+    "root": true,
+    "languageOptions": { "sourceType": "module", "ecmaVersion": "latest" },
+    "extends": ["eslint:recommended"],
+    "rules": { "no-unused-vars": ["warn", { "argsIgnorePattern": "^_" }] }
+  }

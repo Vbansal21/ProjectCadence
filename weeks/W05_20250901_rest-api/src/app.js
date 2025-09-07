@@ -55,9 +55,16 @@ app.get("/", (_req, res) => {
 });
 app.get("/favicon.ico", (_req, res) => res.status(204).end());
 app.get("/health", (_req, res) => res.json({ ok: true }));
-app.use("/users", usersRouter);
-app.use("/articles", articlesRouter);
-app.use("/comments", commentsRouter);
+
+// app.use("/users", usersRouter);
+// app.use("/articles", articlesRouter);
+// app.use("/comments", commentsRouter);
+
+const v1 = express.Router();
+v1.use("/users", usersRouter);
+v1.use("/articles", articlesRouter);
+v1.use("/comments", commentsRouter);
+app.use("/v1", v1);
 
 if (process.env.NODE_ENV !== "test") {
   const mod = await import("./docs/openapi.json", { with: {type: "json"}});
