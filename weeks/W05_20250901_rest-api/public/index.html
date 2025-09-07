@@ -1,0 +1,356 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <title>Week-05 API Console</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <style>
+        :root {
+            --bg: #0d1117;
+            --panel: #161b22;
+            --ink: #c9d1d9;
+            --dim: #8b949e;
+            --accent: #58a6ff;
+            --err: #ffdcdc
+        }
+
+        * {
+            box-sizing: border-box;
+            font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+            margin: 0
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--ink)
+        }
+
+        header,
+        footer {
+            padding: 14px 20px;
+            border-bottom: 1px solid #21262d;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            align-items: center
+        }
+
+        footer {
+            border-top: 1px solid #21262d;
+            border-bottom: none;
+            font-size: 12px;
+            color: var(--dim)
+        }
+
+        main {
+            padding: 20px;
+            display: grid;
+            gap: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(370px, 1fr))
+        }
+
+        .card {
+            background: var(--panel);
+            border: 1px solid #21262d;
+            border-radius: 12px;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px
+        }
+
+        h2 {
+            font-size: 18px;
+            margin-bottom: 4px
+        }
+
+        h3 {
+            font-size: 15px;
+            margin: 8px 0 4px
+        }
+
+        label {
+            font-size: 12px;
+            color: var(--dim);
+            display: block;
+            margin: 6px 0 2px
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            padding: 8px;
+            border-radius: 8px;
+            border: 1px solid #30363d;
+            background: #0d1117;
+            color: var(--ink)
+        }
+
+        button {
+            padding: 7px 11px;
+            border-radius: 8px;
+            border: 1px solid #30363d;
+            background: #1e2737;
+            color: var(--ink);
+            cursor: pointer
+        }
+
+        .primary {
+            background: var(--accent);
+            color: #0d1117;
+            border: none
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px
+        }
+
+        th,
+        td {
+            padding: 6px 8px;
+            border-bottom: 1px solid #21262d;
+            text-align: left;
+            vertical-align: top;
+            white-space: nowrap
+        }
+
+        tbody tr:hover {
+            background: #1b222d
+        }
+
+        .mono {
+            font-family: ui-monospace, Consolas, Menlo, monospace;
+            font-size: 12px
+        }
+
+        .flex {
+            display: flex;
+            gap: 8px;
+            align-items: center
+        }
+
+        #busy {
+            display: none;
+            margin-left: 6px
+        }
+
+        #busy.show {
+            display: inline-block
+        }
+
+        #err {
+            display: none;
+            margin: 10px 20px;
+            padding: 10px;
+            border-radius: 8px;
+            background: #2d0d0d;
+            border: 1px solid #5a1d1d;
+            color: var(--err)
+        }
+
+        .scroll {
+            max-height: 260px;
+            overflow: auto;
+            border: 1px solid #21262d;
+            border-radius: 8px
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <strong>Week-05 API Console</strong>
+        <label class="mono">API Base <input id="base" value="/" style="width:110px"></label>
+        <label class="mono">x-api-key <input id="key" placeholder="optional" style="width:150px"></label>
+        <button id="save">Save</button><span id="busy">⟳</span>
+    </header>
+
+    <div id="err"></div>
+
+    <main>
+        <!-- USERS -->
+        <section class="card" data-res="users">
+            <h2>Users</h2>
+            <div class="flex"><input id="u_name" placeholder="name"><input id="u_mail" placeholder="email"><button
+                    id="u_add" class="primary">Add</button></div>
+            <div class="scroll">
+                <table id="u_tbl">
+                    <thead>
+                        <tr>
+                            <th>id</th>
+                            <th>name</th>
+                            <th>email</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- ARTICLES -->
+        <section class="card" data-res="articles">
+            <h2>Articles</h2>
+            <label>Title<input id="a_title"></label>
+            <label>Body<textarea id="a_body" rows="3"></textarea></label>
+            <label>Author<select id="a_author"></select></label>
+            <div class="flex"><button id="a_add" class="primary">Add</button><button id="a_reset">Reset</button></div>
+            <div class="scroll">
+                <table id="a_tbl">
+                    <thead>
+                        <tr>
+                            <th>id</th>
+                            <th>title</th>
+                            <th>author</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- COMMENTS -->
+        <section class="card" data-res="comments">
+            <h2>Comments</h2>
+            <label>Article<select id="c_article"></select></label>
+            <label>Author<select id="c_author">
+                    <option value="">(anon)</option>
+                </select></label>
+            <label>Text<input id="c_text"></label>
+            <div class="flex"><button id="c_add" class="primary">Add</button><button id="c_reset">Reset</button></div>
+            <div class="scroll">
+                <table id="c_tbl">
+                    <thead>
+                        <tr>
+                            <th>id</th>
+                            <th>article</th>
+                            <th>author</th>
+                            <th>text</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <footer>Change API Base to “/v1” when you enable versioning.</footer>
+
+    <script>
+        const $ = id => document.getElementById(id), busy = $("busy"), err = $("err");
+        const cfg = () => ({ base: localStorage.getItem("base") || "/", key: localStorage.getItem("key") || "" });
+        $("save").onclick = () => { localStorage.setItem("base", $("base").value.trim() || "/"); localStorage.setItem("key", $("key").value.trim()); flash("saved") };
+        (["base", "key"]).forEach(id => $(id).value = cfg()[id]);
+
+        function flash(msg) { err.textContent = msg; err.style.display = "block"; setTimeout(() => err.style.display = "none", 3500); }
+        async function api(path, opt = {}) {
+            busy.classList.add("show"); try {
+                const h = opt.body ? { "content-type": "application/json" } : {}; const k = cfg().key; if (k) h["x-api-key"] = k;
+                const r = await fetch(cfg().base.replace(/\/$/, "") + path, { headers: h, ...opt, body: opt.body ? JSON.stringify(opt.body) : undefined });
+                const t = await r.text(); const j = t ? JSON.parse(t) : {}; if (!r.ok) throw new Error(j.error || r.status); return j;
+            } finally { busy.classList.remove("show") }
+        }
+
+        const short = id => id.slice(0, 8) + "…";
+        const fmt = d => new Date(d).toLocaleString();
+
+        /* lookup maps (id → name / title) */
+        const userMap    = new Map();   // userId → userName
+        const articleMap = new Map();   // articleId → articleTitle
+
+        /* Users ---------------------------------------------------------------- */
+        async function listUsers() {
+            const d = await api("/users");
+            d.data.forEach(u => userMap.set(u.id, u.name));     // ✱ map fill
+            const tb = $("u_tbl").querySelector("tbody");
+            tb.innerHTML = d.data.map(u => `<tr data-id=${u.id}><td class=mono>${short(u.id)}</td><td>${u.name}</td><td>${u.email}</td>
+  <td><button data-act="del">✕</button></td></tr>`).join("") || "<tr><td colspan=4>No data</td></tr>";
+            const opts = d.data.map(u => `<option value=${u.id}>${u.name}</option>`).join("");
+            $("a_author").innerHTML = opts; $("c_author").innerHTML = "<option value=''>anon</option>" + opts;
+        }
+        $("u_add").onclick = async () => {
+            const name = $("u_name").value.trim(), email = $("u_mail").value.trim();
+            if (!name || !email) return flash("name+email"); await api("/users", { method: "POST", body: { name, email } });
+            $("u_name").value = $("u_mail").value = ""; listUsers();
+        }
+        $("u_tbl").onclick = async e => {
+            if (e.target.dataset.act === "del") {
+                const id = e.target.closest("tr").dataset.id;
+                if (confirm("delete user?")) { await api("/users/" + id, { method: "DELETE" }); listUsers(); }
+            }
+        }
+
+        /* Articles ------------------------------------------------------------- */
+        let editA = null;
+        async function listArticles() {
+            const d = await api("/articles");
+            d.data.forEach(a => articleMap.set(a.id, a.title)); // ✱ map fill
+            const tb = $("a_tbl").querySelector("tbody");
+            tb.innerHTML = d.data.map(a => `<tr data-id=${a.id}><td class=mono>${short(a.id)}</td>
+  <td>${a.title}</td><td class=mono>${userMap.get(a.authorId) || short(a.authorId)}</td>
+  <td><button data-act="get">✎</button> <button data-act="del">✕</button></td></tr>`).join("") || "<tr><td colspan=4>No data</td></tr>";
+            const opts = d.data.map(a => `<option value=${a.id}>${a.title}</option>`).join("");
+            $("c_article").innerHTML = opts;
+        }
+        $("a_add").onclick = async () => {
+            const title = $("a_title").value.trim(), body = $("a_body").value.trim(), author = $("a_author").value;
+            if (!title || !author) return flash("title+author");
+            if (editA) {
+                await api("/articles/" + editA, { method: "PUT", body: { title, body } });
+                editA = null; $("a_add").textContent = "Add";
+            } else {
+                await api("/articles", { method: "POST", body: { title, body, authorId: author } });
+            }
+            $("a_title").value = $("a_body").value = ""; listArticles();
+        }
+        $("a_reset").onclick = () => { editA = null; $("a_title").value = $("a_body").value = ""; $("a_add").textContent = "Add"; }
+        $("a_tbl").onclick = async e => {
+            const tr = e.target.closest("tr"); if (!tr) return;
+            const id = tr.dataset.id, act = e.target.dataset.act;
+            if (act === "del") { if (confirm("delete article?")) { await api("/articles/" + id, { method: "DELETE" }); listArticles(); } }
+            if (act === "get") {
+                const a = await api("/articles/" + id); $("a_title").value = a.data.title; $("a_body").value = a.data.body || "";
+                $("a_author").value = a.data.authorId; editA = id; $("a_add").textContent = "Update";
+            }
+        }
+        /* Comments ------------------------------------------------------------- */
+        let editC = null;
+        async function listComments() {
+            const d = await api("/comments"); const tb = $("c_tbl").querySelector("tbody");
+            tb.innerHTML = d.data.map(c => `<tr data-id=${c.id}><td class=mono>${short(c.id)}</td>
+  <td class=mono>${articleMap.get(c.articleId) || short(c.articleId)}</td><td>${c.authorId ? (userMap.get(c.authorId) || short(c.authorId)) : "anon"}</td>
+  <td>${c.text}</td><td><button data-act="get">✎</button> <button data-act="del">✕</button></td></tr>`).join("") || "<tr><td colspan=5>No data</td></tr>";
+        }
+        $("c_add").onclick = async () => {
+            const article = $("c_article").value, text = $("c_text").value.trim(), author = $("c_author").value || undefined;
+            if (!article || !text) return flash("article+text");
+            if (editC) { await api("/comments/" + editC, { method: "PUT", body: { text } }); editC = null; $("c_add").textContent = "Add"; }
+            else { await api("/comments", { method: "POST", body: { articleId: article, text, authorId: author } }); }
+            $("c_text").value = ""; listComments();
+        }
+        $("c_reset").onclick = () => { editC = null; $("c_text").value = ""; $("c_add").textContent = "Add"; }
+        $("c_tbl").onclick = async e => {
+            const tr = e.target.closest("tr"); if (!tr) return;
+            const id = tr.dataset.id, act = e.target.dataset.act;
+            if (act === "del") { if (confirm("delete?")) { await api("/comments/" + id, { method: "DELETE" }); listComments(); } }
+            if (act === "get") {
+                const c = await api("/comments/" + id); $("c_article").value = c.data.articleId;
+                $("c_author").value = c.data.authorId || ""; $("c_text").value = c.data.text; editC = id; $("c_add").textContent = "Update";
+            }
+        }
+        /* boot --------------------------------------------------------------- */
+        document.addEventListener("DOMContentLoaded", async () => {
+            try {
+                await listUsers(); await listArticles(); await listComments();
+            } catch (e) { flash(e.message) }
+        });
+    </script>
+</body>
+
+</html>
