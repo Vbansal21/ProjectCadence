@@ -23,30 +23,30 @@
         <div class='clearfix'>
 
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">92.3% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/13</span>
+                <span class='fraction'>12/13</span>
             </div>
 
 
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">71.42% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>0/14</span>
+                <span class='fraction'>10/14</span>
             </div>
 
 
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>0/3</span>
+                <span class='fraction'>3/3</span>
             </div>
 
 
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/11</span>
+                <span class='fraction'>11/11</span>
             </div>
 
 
@@ -61,7 +61,7 @@
             </div>
         </template>
     </div>
-    <div class='status-line low'></div>
+    <div class='status-line high'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -81,47 +81,47 @@
 <a name='L16'></a><a href='#L16'>16</a>
 <a name='L17'></a><a href='#L17'>17</a>
 <a name='L18'></a><a href='#L18'>18</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">export function <span class="fstat-no" title="function not covered" >parseQuery(</span>q) {
-    const page = <span class="cstat-no" title="statement not covered" >Math.max(1, Number(q.page) || 1);</span>
-    const limit = <span class="cstat-no" title="statement not covered" >Math.min(100, Math.max(1, Number(q.limit) || 20));</span>
-    const sort = <span class="cstat-no" title="statement not covered" >(q.sort || "createdAt:desc").split(":");</span>
-<span class="cstat-no" title="statement not covered" >    return { page, limit, sort: { field: sort[0], dir: (sort[1] || "desc").toLowerCase() } };</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">export function parseQuery(q) {
+    const page = Math.max(1, Number(q.page) || 1);
+    const limit = Math.min(100, Math.max(1, Number(q.limit) || 20));
+    const sort = (q.sort || "createdAt:desc").split(":");
+    return { page, limit, sort: { field: sort[0], dir: (sort[1] || <span class="branch-1 cbranch-no" title="branch not covered" >"desc")</span>.toLowerCase() } };
   }
-
-  export function <span class="fstat-no" title="function not covered" >applyListQuery(</span>items, { page, limit, sort }) {
-    const arr = <span class="cstat-no" title="statement not covered" >[...items].sort(<span class="fstat-no" title="function not covered" >(a</span>, b) =&gt; {</span>
-      const av = <span class="cstat-no" title="statement not covered" >a[sort.field],</span> bv = <span class="cstat-no" title="statement not covered" >b[sort.field];</span>
-<span class="cstat-no" title="statement not covered" >      if (av === bv) <span class="cstat-no" title="statement not covered" >return 0;</span></span>
-<span class="cstat-no" title="statement not covered" >      return (av &gt; bv ? 1 : -1) * (sort.dir === "desc" ? -1 : 1);</span>
+&nbsp;
+  export function applyListQuery(items, { page, limit, sort }) {
+    const arr = [...items].sort((a, b) =&gt; {
+      const av = a[sort.field], bv = b[sort.field];
+      <span class="missing-if-branch" title="if path not taken" >I</span>if (av === bv) <span class="cstat-no" title="statement not covered" >return 0;</span>
+      return (av &gt; bv ? 1 : <span class="branch-1 cbranch-no" title="branch not covered" >-1)</span> * (sort.dir === "desc" ? <span class="branch-0 cbranch-no" title="branch not covered" >-1 </span>: 1);
     });
-    const start = <span class="cstat-no" title="statement not covered" >(page - 1) * limit;</span>
-    const slice = <span class="cstat-no" title="statement not covered" >arr.slice(start, start + limit);</span>
-<span class="cstat-no" title="statement not covered" >    return { slice, meta: { page, limit, total: arr.length } };</span>
+    const start = (page - 1) * limit;
+    const slice = arr.slice(start, start + limit);
+    return { slice, meta: { page, limit, total: arr.length } };
   }
-  </pre></td></tr></table></pre>
+&nbsp;</pre></td></tr></table></pre>
 
                 <div class='push'></div><!-- for sticky footer -->
             </div><!-- /wrapper -->
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-09-07T08:22:52.585Z
+                at 2025-09-07T10:24:47.281Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

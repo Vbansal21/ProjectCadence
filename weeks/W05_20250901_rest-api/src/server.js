@@ -1,8 +1,11 @@
+import "dotenv/config";
 import http from "http";
 import app from "./app.js";
-import "dotenv/config";
+import { config } from "./config.js";
 
-const port = process.env.PORT || 3000;
-http.createServer(app).listen(port, () => {
-  console.log(`Week-05 REST API listening on http://localhost:${port}`);
+const server = http.createServer(app);
+server.listen(config.port, () => {
+  console.log(`Week-05 REST API listening on http://localhost:${config.port} (${config.env})`);
 });
+
+export default server;

@@ -18,12 +18,18 @@ function createStore() {
       items.set(id, updated);
       return updated;
     },
-    remove: (id) => items.delete(id)
+    remove: (id) => items.delete(id),
+    reset: () => items.clear()
   };
 }
 
 export const db = {
   users: createStore(),
   articles: createStore(),
-  comments: createStore()
+  comments: createStore(),
+  resetAll() {
+    this.users.reset();
+    this.articles.reset();
+    this.comments.reset();
+  }
 };

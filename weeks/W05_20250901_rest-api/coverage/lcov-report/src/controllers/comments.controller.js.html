@@ -25,28 +25,28 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/21</span>
+                <span class='fraction'>0/26</span>
             </div>
 
 
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>0/12</span>
+                <span class='fraction'>0/14</span>
             </div>
 
 
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>0/5</span>
+                <span class='fraction'>0/6</span>
             </div>
 
 
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/17</span>
+                <span class='fraction'>0/22</span>
             </div>
 
 
@@ -93,9 +93,25 @@
 <a name='L28'></a><a href='#L28'>28</a>
 <a name='L29'></a><a href='#L29'>29</a>
 <a name='L30'></a><a href='#L30'>30</a>
-<a name='L31'></a><a href='#L31'>31</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L31'></a><a href='#L31'>31</a>
+<a name='L32'></a><a href='#L32'>32</a>
+<a name='L33'></a><a href='#L33'>33</a>
+<a name='L34'></a><a href='#L34'>34</a>
+<a name='L35'></a><a href='#L35'>35</a>
+<a name='L36'></a><a href='#L36'>36</a>
+<a name='L37'></a><a href='#L37'>37</a>
+<a name='L38'></a><a href='#L38'>38</a>
+<a name='L39'></a><a href='#L39'>39</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -124,34 +140,42 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import { db } from "../models/db.js";
+import { parseQuery, applyListQuery } from "../utils/query.js";
+import { ok, created, HttpError} from "../utils/http.js";
 &nbsp;
-export async function <span class="fstat-no" title="function not covered" >listComments(</span>_req, res) {
-<span class="cstat-no" title="statement not covered" >  res.json({ data: db.comments.all() });</span>
+export async function <span class="fstat-no" title="function not covered" >listComments(</span>req, res) {
+  const all = <span class="cstat-no" title="statement not covered" >db.comments.all();</span>
+  const filtered = <span class="cstat-no" title="statement not covered" >req.query.authorId</span>
+    ? all.filter(<span class="fstat-no" title="function not covered" >a </span>=&gt; <span class="cstat-no" title="statement not covered" >a.authorId === req.query.authorId)</span>
+    : all;
+  const q = <span class="cstat-no" title="statement not covered" >parseQuery(req.query);</span>
+  const {slice, meta} = <span class="cstat-no" title="statement not covered" >applyListQuery(filtered, q);</span>
+<span class="cstat-no" title="statement not covered" >  return ok(res, slice, meta);</span>
 }
 export async function <span class="fstat-no" title="function not covered" >createComment(</span>req, res) {
   const { articleId, authorId } = <span class="cstat-no" title="statement not covered" >req.validated;</span>
   const article = <span class="cstat-no" title="statement not covered" >db.articles.get(articleId);</span>
-<span class="cstat-no" title="statement not covered" >  if (!article) <span class="cstat-no" title="statement not covered" >return res.status(400).json({ error: "Invalid articleId" });</span></span>
+<span class="cstat-no" title="statement not covered" >  if (!article) <span class="cstat-no" title="statement not covered" >throw new HttpError(400, "Invalid articleId");</span></span>
 <span class="cstat-no" title="statement not covered" >  if (authorId &amp;&amp; !db.users.get(authorId)) {</span>
-<span class="cstat-no" title="statement not covered" >    return res.status(400).json({ error: "Invalid authorId" });</span>
+<span class="cstat-no" title="statement not covered" >    throw new HttpError(400, "Invalid authorId");</span>
   }
   const doc = <span class="cstat-no" title="statement not covered" >db.comments.insert(req.validated);</span>
-<span class="cstat-no" title="statement not covered" >  res.status(201).json({ data: doc });</span>
+<span class="cstat-no" title="statement not covered" >  return created(res, doc);</span>
 }
 export async function <span class="fstat-no" title="function not covered" >getComment(</span>req, res) {
   const doc = <span class="cstat-no" title="statement not covered" >db.comments.get(req.params.id);</span>
-<span class="cstat-no" title="statement not covered" >  if (!doc) <span class="cstat-no" title="statement not covered" >return res.status(404).json({ error: "Comment not found" });</span></span>
-<span class="cstat-no" title="statement not covered" >  res.json({ data: doc });</span>
+<span class="cstat-no" title="statement not covered" >  if (!doc) <span class="cstat-no" title="statement not covered" >throw new HttpError(404, "Comment not found");</span></span>
+<span class="cstat-no" title="statement not covered" >  return ok(res, doc);</span>
 }
 export async function <span class="fstat-no" title="function not covered" >updateComment(</span>req, res) {
   const doc = <span class="cstat-no" title="statement not covered" >db.comments.update(req.params.id, req.validated);</span>
-<span class="cstat-no" title="statement not covered" >  if (!doc) <span class="cstat-no" title="statement not covered" >return res.status(404).json({ error: "Comment not found" });</span></span>
-<span class="cstat-no" title="statement not covered" >  res.json({ data: doc });</span>
+<span class="cstat-no" title="statement not covered" >  if (!doc) <span class="cstat-no" title="statement not covered" >throw new HttpError(404, "Comment not found");</span></span>
+<span class="cstat-no" title="statement not covered" >  return ok(res, doc);</span>
 }
 export async function <span class="fstat-no" title="function not covered" >removeComment(</span>req, res) {
   const ok = <span class="cstat-no" title="statement not covered" >db.comments.remove(req.params.id);</span>
-<span class="cstat-no" title="statement not covered" >  if (!ok) <span class="cstat-no" title="statement not covered" >return res.status(404).json({ error: "Comment not found" });</span></span>
-<span class="cstat-no" title="statement not covered" >  res.status(204).send();</span>
+<span class="cstat-no" title="statement not covered" >  if (!ok) <span class="cstat-no" title="statement not covered" >throw new HttpError(404, "Comment not found");</span></span>
+<span class="cstat-no" title="statement not covered" >  return res.status(204).send();</span>
 }
 &nbsp;</pre></td></tr></table></pre>
 
@@ -160,7 +184,7 @@ export async function <span class="fstat-no" title="function not covered" >remov
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-09-07T08:22:52.585Z
+                at 2025-09-07T10:24:47.281Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

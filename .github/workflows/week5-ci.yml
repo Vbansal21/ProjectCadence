@@ -1,0 +1,30 @@
+# .github/workflows/week5-ci.yml
+name: Week5 Node CI
+
+on:
+  push:
+    branches: [main, develop, "feature/**"]
+    paths:
+      - "weeks/W05_20250901_rest-api/**"
+      - ".github/workflows/week5-ci.yml"
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - "weeks/W05_20250901_rest-api/**"
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: weeks/W05_20250901_rest-api
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: "20" }
+      - run: npm ci
+      - run: npm test
+        env:
+          NODE_OPTIONS: --experimental-vm-modules
+          NODE_ENV: test
+          API_KEY: dev-123
