@@ -1,6 +1,6 @@
 # Week 02 — Data Structures & Algorithms Benchmarks
 
-**Week** 02 – 2025-08-11 → 2025-08-17
+**Week** 02 - 2025-08-11 → 2025-08-17
 
 Benchmarks are experiments. Control the environment, define workloads, and report **distributions**—not single runs.
 
@@ -41,13 +41,13 @@ Benchmarks are experiments. Control the environment, define workloads, and repor
 
 ---
 
-## 2) What’s Implemented (scaffold)
+## 2) What's Implemented (scaffold)
 
 **Data structures (custom)**
 
 - `DynArray<T>` — growth policy (default ×2), optional arena-backed reallocation.
 - `SinglyList<T>` — pointer-chasing baseline.
-- `BinaryHeap<T>` — array-backed max-heap (push + top wired in workload; `pop()` path is left simple to keep the scaffold small—see “Open TODOs”).
+- `BinaryHeap<T>` — array-backed max-heap (push + top wired in workload; `pop()` path is left simple to keep the scaffold small—see "Open TODOs").
 - `HashMap` — open addressing with linear probing, load factor cap 0.7, tombstones and rehash.
 
 **Workloads (first pass)**
@@ -67,10 +67,12 @@ Benchmarks are experiments. Control the environment, define workloads, and repor
 ## 3) Build & Run
 
 ### Requirements
+
 - **Compiler:** g++ 11+ or clang++ 13+ (C++20). MSVC works; perf is Linux/WSL only.
 - **Tools:** cmake, python3 (optional for plots), perf (optional), taskset/numactl (optional).
 
 ### Build
+
 ```bash
 cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
 cmake --build build -j
@@ -119,12 +121,12 @@ Each row is **one trial** of one workload and size.
 
 ## 5) Environment Control (write this in your paper/blog too)
 
-* **CPU pinning:** `taskset -c 0` (Linux/WSL). Keep other cores idle.
-* **NUMA locality:** `numactl --localalloc` to avoid cross-node noise.
-* **Governor/Turbo:** Prefer a fixed frequency (`performance` governor). If you can’t, keep runs short and interleave A/B/A/B.
-* **Build flags:** Release with `-O3 -march=native -DNDEBUG` (Linux). MSVC: `/O2 /DNDEBUG`.
-* **Thermals:** Don’t run 10-minute marathons without cooldown; throttle flips winners.
-* **Background noise:** Close browsers, sync tools, and anything scanning files.
+- **CPU pinning:** `taskset -c 0` (Linux/WSL). Keep other cores idle.
+- **NUMA locality:** `numactl --localalloc` to avoid cross-node noise.
+- **Governor/Turbo:** Prefer a fixed frequency (`performance` governor). If you can't, keep runs short and interleave A/B/A/B.
+- **Build flags:** Release with `-O3 -march=native -DNDEBUG` (Linux). MSVC: `/O2 /DNDEBUG`.
+- **Thermals:** Don't run 10-minute marathons without cooldown; throttle flips winners.
+- **Background noise:** Close browsers, sync tools, and anything scanning files.
 
 ---
 
@@ -145,38 +147,38 @@ Use counters to compute **CPI** (cycles/instruction) and **miss rates**. They ex
 
 ## 7) Fairness Notes
 
-* **Consume results:** We checksum traversals to stop the compiler from deleting loops.
-* **Allocator dominance:** If allocation noise dominates, switch workloads to “build once, then operate,” or use `Arena` for *build* and `new/delete` for *operate*.
-* **Apples-to-apples:** When you later add STL baselines, match policies (e.g., `reserve()` behavior for `std::vector`, load factors for hash tables).
+- **Consume results:** We checksum traversals to stop the compiler from deleting loops.
+- **Allocator dominance:** If allocation noise dominates, switch workloads to "build once, then operate," or use `Arena` for *build* and `new/delete` for *operate*.
+- **Apples-to-apples:** When you later add STL baselines, match policies (e.g., `reserve()` behavior for `std::vector`, load factors for hash tables).
 
 ---
 
 ## 8) Interpreting Curves (what to look for)
 
-* **Vector bulk append:** With growth ×2 you should see \~O(1) amortized; if ns/op spikes periodically, that’s reallocation. Add `reserve(N)` as an ablation.
-* **List scan:** ns/op will be flat but *much* higher than vector due to cache misses and pointer chasing.
-* **Heap push/peek:** Mostly log-like; hotspots show up if key distribution triggers long sift-up chains.
-* **Hash insert/find:** Watch how `zipf` worsens probe clustering; miss rate climbs as load factor approaches 0.7.
+- **Vector bulk append:** With growth ×2 you should see \~O(1) amortized; if ns/op spikes periodically, that's reallocation. Add `reserve(N)` as an ablation.
+- **List scan:** ns/op will be flat but *much* higher than vector due to cache misses and pointer chasing.
+- **Heap push/peek:** Mostly log-like; hotspots show up if key distribution triggers long sift-up chains.
+- **Hash insert/find:** Watch how `zipf` worsens probe clustering; miss rate climbs as load factor approaches 0.7.
 
 ---
 
 ## 9) Open TODOs (intended exercises)
 
-* Add `DynArray::pop_back()` and wire a proper `BinaryHeap::pop()` loop.
-* Expose knobs:
+- Add `DynArray::pop_back()` and wire a proper `BinaryHeap::pop()` loop.
+- Expose knobs:
 
-  * Vector growth factor 1.5/2.0 and a variant with `reserve(N)`.
-  * Hash load factor targets 0.5/0.7/0.9 and quadratic probing vs linear vs robin-hood.
-* Add **STL baselines** (`std::vector`, `std::list`, `std::priority_queue`, `std::unordered_map`) under the same workloads and emit rows with `impl=stl`.
-* Optional: integrate Google Benchmark as a second harness to cross-check numbers.
+  - Vector growth factor 1.5/2.0 and a variant with `reserve(N)`.
+  - Hash load factor targets 0.5/0.7/0.9 and quadratic probing vs linear vs robin-hood.
+- Add **STL baselines** (`std::vector`, `std::list`, `std::priority_queue`, `std::unordered_map`) under the same workloads and emit rows with `impl=stl`.
+- Optional: integrate Google Benchmark as a second harness to cross-check numbers.
 
 ---
 
 ## 10) Known Limitations (on purpose)
 
-* This harness prints wall-time only. Perf counters are run separately (simple, transparent).
-* Zipf sampler is basic. Good enough to stress caches; you can swap in a sharper sampler if needed.
-* No cross-platform pinning helpers; we keep scripts plain for WSL/Linux.
+- This harness prints wall-time only. Perf counters are run separately (simple, transparent).
+- Zipf sampler is basic. Good enough to stress caches; you can swap in a sharper sampler if needed.
+- No cross-platform pinning helpers; we keep scripts plain for WSL/Linux.
 
 ---
 

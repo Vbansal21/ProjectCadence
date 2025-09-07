@@ -1,6 +1,6 @@
 # Week 1 — Reverse-Engineering Stdlib (C++20)
 
-**Week** 01 – 2025-08-04 → 2025-08-10
+**Week** 01 - 2025-08-04 → 2025-08-10
 
 **Goal:** Recreate `std::vector`, `memcpy`, and a `std::sort`-like algorithm. Test first; make it fast and leak-free later.
 

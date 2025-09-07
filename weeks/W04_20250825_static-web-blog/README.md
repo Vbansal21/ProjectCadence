@@ -1,10 +1,10 @@
-# Week 4 – Static Blog (HTMX · Tailwind · TS · D3)
+# Week 4 - Static Blog (HTMX · Tailwind · TS · D3)
 
 **Week** 04 - 2025-08-25 → 2025-08-31
 
-I built a **project-page–friendly static blog** that lives entirely inside this Week-4 directory and deploys to GitHub Pages. It’s framework-free in spirit (no SPA), but modern in practice: **HTMX** for partial swaps, **Tailwind** for styles, **TypeScript** for small enhancements, and **D3.js** for focused, page-local visuals. Everything is static and relative-linked so it works under a project page path.
+I built a **project-page-friendly static blog** that lives entirely inside this Week-4 directory and deploys to GitHub Pages. It's framework-free in spirit (no SPA), but modern in practice: **HTMX** for partial swaps, **Tailwind** for styles, **TypeScript** for small enhancements, and **D3.js** for focused, page-local visuals. Everything is static and relative-linked so it works under a project page path.
 
-- **Live (project page):** served from the repo’s `gh-pages` branch.
+- **Live (project page):** served from the repo's `gh-pages` branch.
 - **Scope this week:** ship the scaffold + 3 advanced posts
   - Semantic HTML for A11y & SEO
   - Responsive Design: Fluid Type & Grid
@@ -12,10 +12,9 @@ I built a **project-page–friendly static blog** that lives entirely inside thi
 
 ---
 
-## What’s in here
+## What's in here
 
 ```
-
 weeks/W04\_20250825\_static-web-blog/
 ├─ README.md
 ├─ NOTES.md
@@ -78,7 +77,7 @@ npm run build
 
 Open `public/index.html` in a simple local server (e.g., VS Code Live Server). All links are relative; no special base path needed.
 
-> Why npm if it’s GitHub Pages?
+> Why npm if it's GitHub Pages?
 > Pages only hosts static files. I compile Tailwind/TS with npm **in CI** so Pages serves minified static assets.
 
 ---
@@ -91,10 +90,10 @@ CI workflow lives at repo root:
 .github/workflows/deployW04.yml
 ```
 
-* Triggers on changes under `weeks/W04_20250825_static-web-blog/site/**`
-* Runs `npm ci && npm run build`
-* Publishes `site/public/` to `gh-pages`
-* Repo settings: Pages → Source = `gh-pages` (branch), Folder = `/`
+- Triggers on changes under `weeks/W04_20250825_static-web-blog/site/**`
+- Runs `npm ci && npm run build`
+- Publishes `site/public/` to `gh-pages`
+- Repo settings: Pages → Source = `gh-pages` (branch), Folder = `/`
 
 No secrets required; uses the repo `GITHUB_TOKEN` with `contents: write`.
 
@@ -113,27 +112,27 @@ No secrets required; uses the repo `GITHUB_TOKEN` with `contents: write`.
 
 ## Accessibility & SEO practices I enforced
 
-* Landmarks: `header`, `nav[aria-label]`, `main`, `footer`.
-* Skip-to-content link, visible focus rings.
-* Logical heading outline; no fake headings.
-* Purposeful alt text; decorative images use `alt=""`.
-* Articles include title/description, Open Graph/Twitter, and `BlogPosting` JSON-LD.
-* Multipage site (no SPA router) → good crawlability and deep-linking.
+- Landmarks: `header`, `nav[aria-label]`, `main`, `footer`.
+- Skip-to-content link, visible focus rings.
+- Logical heading outline; no fake headings.
+- Purposeful alt text; decorative images use `alt=""`.
+- Articles include title/description, Open Graph/Twitter, and `BlogPosting` JSON-LD.
+- Multipage site (no SPA router) → good crawlability and deep-linking.
 
 ---
 
 ## Performance budget
 
-* Keep non-interactive pages ≤ \~120 KB JS and ≤ \~80 KB CSS (post-purge Tailwind).
-* Load **D3** only on pages that need it (each article scopes its chart).
-* Everything is static; no client-side routing.
+- Keep non-interactive pages ≤ \~120 KB JS and ≤ \~80 KB CSS (post-purge Tailwind).
+- Load **D3** only on pages that need it (each article scopes its chart).
+- Everything is static; no client-side routing.
 
 ---
 
 ## Monorepo + detach-ready
 
-* All site code lives under this Week-4 directory with relative links → it’s trivially extractable to a standalone repo later.
-* The GitHub Actions workflow publishes **only this subdir’s `public/`** to `gh-pages`.
+- All site code lives under this Week-4 directory with relative links → it's trivially extractable to a standalone repo later.
+- The GitHub Actions workflow publishes **only this subdir's `public/`** to `gh-pages`.
 
 ---
 

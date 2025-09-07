@@ -14,13 +14,13 @@
 
 ```shell
 
-error: ... declared using local type ‘<lambda>’, is used but never defined
+error: ... declared using local type '<lambda>', is used but never defined
 
 ````
 
 and both `vector_tests` and `memcpy_tests` aborted because the functions intentionally called `std::abort()`.
 
-- This is the classic *template-in-header* pitfall: I had declared `my_sort` in a header and tried to define it in a `.cpp`. With a comparator **lambda** from the test TU, the comparator type is TU-local, so the compiler can’t find a matching instantiation in the `.cpp`. Linker complains; tests don’t build.
+- This is the classic *template-in-header* pitfall: I had declared `my_sort` in a header and tried to define it in a `.cpp`. With a comparator **lambda** from the test TU, the comparator type is TU-local, so the compiler can't find a matching instantiation in the `.cpp`. Linker complains; tests don't build.
 
 ---
 
@@ -31,7 +31,7 @@ and both `vector_tests` and `memcpy_tests` aborted because the functions intenti
 2. **`my_memcpy` (correctness first).**
    Replaced the abort with a bytewise copy:
 
-- Spec-aligned semantics: **no overlap** (that’s `memmove`), returns `dest`.
+- Spec-aligned semantics: **no overlap** (that's `memmove`), returns `dest`.
 - Left room to widen later (word-sized chunks, unrolling, alignment).
 
 3. **`MyVector<T>` (the smallest honest vector).**
@@ -51,11 +51,11 @@ and both `vector_tests` and `memcpy_tests` aborted because the functions intenti
 ## What I learned / reinforced
 
 - **Template linkage reality check.**
-  Function templates that depend on TU-local types (lambdas, unnamed structs) must be fully visible in the header. Declaring in a header but defining in a `.cpp` invites ODR/link errors unless you explicitly manage instantiations (and you can’t for anonymous types).
+  Function templates that depend on TU-local types (lambdas, unnamed structs) must be fully visible in the header. Declaring in a header but defining in a `.cpp` invites ODR/link errors unless you explicitly manage instantiations (and you can't for anonymous types).
 - **Comparator is part of the type.**
-  `Compare` in `my_sort` isn’t “just a function”; the lambda’s *type* is unique. Header-only is the path of least resistance here.
-- **Vector’s truth is object lifetime.**
-  The work isn’t `new[]`; it’s *placement-new into raw storage* and manually calling destructors on the constructed range. Reallocation is a dance:
+  `Compare` in `my_sort` isn't "just a function"; the lambda's *type* is unique. Header-only is the path of least resistance here.
+- **Vector's truth is object lifetime.**
+  The work isn't `new[]`; it's *placement-new into raw storage* and manually calling destructors on the constructed range. Reallocation is a dance:
 
 1) allocate raw storage for `new_cap`
 2) move/copy-construct into new storage
@@ -65,7 +65,7 @@ and both `vector_tests` and `memcpy_tests` aborted because the functions intenti
 
 - **memcpy vs memmove.**
   Overlap is **UB** for `memcpy`. Tests should never rely on overlap unless I implement `memmove`.
-- **WSL/OneDrive “clock skew”** is a harmless warning; clean builds remove the noise.
+- **WSL/OneDrive "clock skew"** is a harmless warning; clean builds remove the noise.
 
 ---
 
