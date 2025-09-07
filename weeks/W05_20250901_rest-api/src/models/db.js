@@ -24,6 +24,6 @@ function createStore() {
 
 export const db = {
   users: createStore(),
-  // articles: createStore(),
-  // comments: createStore()
+  articles: createStore(),
+  comments: createStore()
 };

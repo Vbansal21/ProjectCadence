@@ -1,15 +1,38 @@
 {
-    "openapi": "3.0.3",
-    "info": { "title": "Week-05 REST API", "version": "0.1.0" },
-    "paths": {
-      "/health": { "get": { "summary": "Liveness", "responses": { "200": { "description": "OK" } } } },
-      "/users": {
-        "get": { "summary": "List users", "responses": { "200": { "description": "OK" } } },
-        "post": {
-          "summary": "Create user",
-          "requestBody": { "required": true },
-          "responses": { "201": { "description": "Created" }, "400": { "description": "ValidationError" } }
-        }
-      }
+  "openapi": "3.0.3",
+  "info": { "title": "Week-05 REST API", "version": "0.2.0" },
+  "components": {
+    "schemas": {
+      "User": { "type": "object", "properties": {
+        "id": { "type": "string", "format": "uuid" },
+        "name": { "type": "string" }, "email": { "type": "string", "format": "email" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      }},
+      "Article": { "type": "object", "properties": {
+        "id": { "type": "string", "format": "uuid" },
+        "title": { "type": "string" }, "body": { "type": "string" },
+        "authorId": { "type": "string", "format": "uuid" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      }},
+      "Comment": { "type": "object", "properties": {
+        "id": { "type": "string", "format": "uuid" },
+        "articleId": { "type": "string", "format": "uuid" },
+        "authorId": { "type": "string", "format": "uuid" },
+        "text": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      }}
+    },
+    "securitySchemes": {
+      "apiKey": { "type": "apiKey", "in": "header", "name": "x-api-key" }
     }
+  },
+  "security": [{ "apiKey": [] }],
+  "paths": {
+    "/users": { "get": { "summary": "List users", "responses": { "200": { "description": "OK" } } } },
+    "/articles": { "get": { "summary": "List articles", "responses": { "200": { "description": "OK" } } } },
+    "/comments": { "get": { "summary": "List comments", "responses": { "200": { "description": "OK" } } } }
   }
+}
