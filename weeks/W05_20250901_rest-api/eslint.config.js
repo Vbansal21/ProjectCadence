@@ -1,22 +1,23 @@
-// eslint.config.js
 import js from "@eslint/js";
 import globals from "globals";
-import jest from "eslint-plugin-jest";
+let jestPlugin;
+try {
+  const m = await import("eslint-plugin-jest");
+  jestPlugin = m.default ?? m;
+} catch {
+  jestPlugin = null;
+}
 
 export default [
-  // What to ignore everywhere
   {
     ignores: [
       "node_modules/",
       "coverage/",
       "dist/",
       "**/*.min.js",
-      // if you lint from monorepo root, ignore other weeks:
-      // "../**/*"
     ],
   },
 
-  // Base rules (Node ESM)
   {
     languageOptions: {
       ecmaVersion: "latest",
@@ -46,18 +47,11 @@ export default [
     rules: {},
   },
 
-  // Tests (Jest)
+  // Tests: enable jest globals; add plugin rules only if available
   {
     files: ["tests/**/*.js"],
-    plugins: { jest },
-    languageOptions: {
-      globals: {
-        ...globals.node,
-        ...globals.jest,
-      },
-    },
-    rules: {
-      ...jest.configs.recommended.rules,
-    },
+    plugins: jestPlugin ? { jest: jestPlugin } : {},
+    languageOptions: { globals: { ...globals.node, ...globals.jest } },
+    rules: jestPlugin ? { ...jestPlugin.configs.recommended.rules } : {}
   },
 ];

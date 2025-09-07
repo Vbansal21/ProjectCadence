@@ -1,7 +1,9 @@
 {
   "name": "w05_20250901_rest-api",
   "version": "1.0.0",
-  "engines": { "node": ">=22 <24" },
+  "engines": {
+    "node": ">=22 <24"
+  },
   "private": true,
   "type": "module",
   "description": "**Week** 05 - 2025-09-01 → 2025-09-07",
@@ -33,7 +35,9 @@
     "@eslint/js": "^9.35.0",
     "cross-env": "^10.0.0",
     "eslint": "^9.35.0",
+    "eslint-plugin-jest": "^28.14.0",
     "express-rate-limit": "^8.1.0",
+    "globals": "^16.3.0",
     "jest": "^29.7.0",
     "nodemon": "^3.1.10",
     "supertest": "^7.1.4"
